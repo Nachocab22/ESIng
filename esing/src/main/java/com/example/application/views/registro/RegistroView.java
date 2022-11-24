@@ -27,7 +27,6 @@ import java.util.Set;
 
 import javax.annotation.security.RolesAllowed;
 
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @PageTitle("Registro")
