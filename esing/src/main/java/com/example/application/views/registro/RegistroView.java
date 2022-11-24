@@ -1,14 +1,13 @@
 package com.example.application.views.registro;
-
-import com.example.application.data.entity.SamplePerson;
-import com.example.application.data.service.SamplePersonService;
+import com.example.application.data.Role;
+import com.example.application.data.entity.User;
+import com.example.application.data.service.UserService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.customfield.CustomField;
-import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
@@ -16,12 +15,19 @@ import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.textfield.EmailField;
+import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+
+import java.security.SecureRandom;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.annotation.security.RolesAllowed;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @PageTitle("Registro")
 @Route(value = "sign_in", layout = MainLayout.class)
@@ -29,38 +35,41 @@ import javax.annotation.security.RolesAllowed;
 @Uses(Icon.class)
 public class RegistroView extends Div {
 
-    private TextField firstName = new TextField("First name");
-    private TextField lastName = new TextField("Last name");
-    private EmailField email = new EmailField("Email address");
-    private DatePicker dateOfBirth = new DatePicker("Birthday");
-    private PhoneNumberField phone = new PhoneNumberField("Phone number");
-    private TextField occupation = new TextField("Occupation");
+    private TextField username = new TextField("Username");
+    private TextField name = new TextField("Name");
+    private PasswordField hashedPassword = new PasswordField("Password");
 
     private Button cancel = new Button("Cancel");
     private Button save = new Button("Save");
+     
+    private Binder<User> binder = new Binder<>(User.class);
+    private Set<Role> usrRol;
+    
 
-    private Binder<SamplePerson> binder = new Binder<>(SamplePerson.class);
-
-    public RegistroView(SamplePersonService personService) {
+    public RegistroView(UserService userService) {
         addClassName("registro-view");
 
         add(createTitle());
         add(createFormLayout());
         add(createButtonLayout());
-
+        usrRol = new HashSet<Role>();
+        usrRol.add(Role.USER);
         binder.bindInstanceFields(this);
         clearForm();
 
         cancel.addClickListener(e -> clearForm());
         save.addClickListener(e -> {
-            personService.update(binder.getBean());
+        	BCryptPasswordEncoder bcryptPasswordEncoder = new BCryptPasswordEncoder();
+        	hashedPassword.setValue(bcryptPasswordEncoder.encode(hashedPassword.getValue()));
+        	binder.getBean().setRoles(usrRol);
+            userService.update(binder.getBean());
             Notification.show(binder.getBean().getClass().getSimpleName() + " details stored.");
             clearForm();
         });
     }
 
     private void clearForm() {
-        binder.setBean(new SamplePerson());
+        binder.setBean(new User());
     }
 
     private Component createTitle() {
@@ -69,8 +78,7 @@ public class RegistroView extends Div {
 
     private Component createFormLayout() {
         FormLayout formLayout = new FormLayout();
-        email.setErrorMessage("Please enter a valid email address");
-        formLayout.add(firstName, lastName, dateOfBirth, phone, email, occupation);
+        formLayout.add(username, name, hashedPassword);
         return formLayout;
     }
 
@@ -86,21 +94,6 @@ public class RegistroView extends Div {
     private static class PhoneNumberField extends CustomField<String> {
         private ComboBox<String> countryCode = new ComboBox<>();
         private TextField number = new TextField();
-
-        public PhoneNumberField(String label) {
-            setLabel(label);
-            countryCode.setWidth("120px");
-            countryCode.setPlaceholder("Country");
-            countryCode.setPattern("\\+\\d*");
-            countryCode.setPreventInvalidInput(true);
-            countryCode.setItems("+354", "+91", "+62", "+98", "+964", "+353", "+44", "+972", "+39", "+225");
-            countryCode.addCustomValueSetListener(e -> countryCode.setValue(e.getDetail()));
-            number.setPattern("\\d*");
-            number.setPreventInvalidInput(true);
-            HorizontalLayout layout = new HorizontalLayout(countryCode, number);
-            layout.setFlexGrow(1.0, number);
-            add(layout);
-        }
 
         @Override
         protected String generateModelValue() {
