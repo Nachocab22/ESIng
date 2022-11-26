@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.Date;
 import java.util.Set;
+import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -16,6 +17,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 @Entity
 @Table(name = "application_user")
@@ -85,4 +89,8 @@ public class User extends AbstractEntity {
         this.profilePicture = profilePicture;
     }
 
+    //En teoria de este modo añadimos los metodos de crud para User con id tipo UUID
+    //En el caso de delete: deleteById(userx.getId()); por ejemplo
+    @Repository
+    public interface UserRepository extends CrudRepository<User, UUID> {}
 }
