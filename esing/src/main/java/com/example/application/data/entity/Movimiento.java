@@ -1,19 +1,19 @@
 package com.example.application.data.entity;
 
+import java.time.LocalDate;
 import javax.persistence.Entity;
-import javax.validation.constraints.Email;
 
 @Entity
 public class Movimiento extends AbstractEntity {
-
+	
     private String cuenta;
     private String tarjeta;
     private int retenido;
     private String concepto;
-    private float cantidad;
-    //private date fecha_op;
+    private double cantidad;
+    private LocalDate fecha_op;
     private int tipo;
-
+    
     public String getCuenta() {
         return cuenta;
     }
@@ -42,19 +42,19 @@ public class Movimiento extends AbstractEntity {
         this.concepto = concepto;
     }
     
-    public float getCantidad() {
+    public double getCantidad() {
         return cantidad;
     }
-    public void setCantidad(float cantidad) {
+    public void setCantidad(double cantidad) {
         this.cantidad = cantidad;
     }
     
-    //public date getFecha_op() {
-    //    return fecha_op;
-    //}
-    //public void setFecha_op(date fecha_op) {
-    //    this.fecha_op = fecha_op;
-    //}
+    public LocalDate getFecha_op() {
+        return fecha_op;
+    }
+    public void setFecha_op(LocalDate fecha_op) {
+        this.fecha_op = fecha_op;
+    }
     
     public int getTipo() {
         return tipo;

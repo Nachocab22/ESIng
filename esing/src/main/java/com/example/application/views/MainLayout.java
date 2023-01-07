@@ -6,6 +6,7 @@ import com.example.application.data.entity.User;
 import com.example.application.security.AuthenticatedUser;
 import com.example.application.views.esing.ESIngView;
 import com.example.application.views.introducetarjetadecredito.IntroducetarjetadecreditoView;
+import com.example.application.views.movimientos.MovimientosUserView;
 import com.example.application.views.movimientos.MovimientosView;
 import com.example.application.views.pago.PagoView;
 import com.example.application.views.registro.RegistroView;
@@ -97,6 +98,10 @@ public class MainLayout extends AppLayout {
         }
         if (accessChecker.hasAccess(MovimientosView.class)) {
             nav.addItem(new AppNavItem("Movimientos", MovimientosView.class, "la la-columns"));
+
+        }
+        if (accessChecker.hasAccess(MovimientosUserView.class)) {
+            nav.addItem(new AppNavItem("Mis Movimientos", MovimientosUserView.class, "la la-columns"));
 
         }
 

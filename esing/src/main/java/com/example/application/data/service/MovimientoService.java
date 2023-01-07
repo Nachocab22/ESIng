@@ -21,6 +21,9 @@ public class MovimientoService {
     public Optional<Movimiento> get(UUID id) {
         return repository.findById(id);
     }
+    public Optional<Movimiento> get(String cuenta) {
+        return repository.findByCuenta(cuenta);
+    }
 
     public Movimiento update(Movimiento entity) {
         return repository.save(entity);
