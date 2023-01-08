@@ -8,6 +8,7 @@ import com.example.application.views.esing.ESIngView;
 import com.example.application.views.introducetarjetadecredito.IntroducetarjetadecreditoView;
 import com.example.application.views.pago.PagoView;
 import com.example.application.views.registro.RegistroView;
+import com.example.application.views.userpage.UserPageView;
 import com.example.application.views.usuarios.UsuariosView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -75,6 +76,10 @@ public class MainLayout extends AppLayout {
 
         if (accessChecker.hasAccess(RegistroView.class)) {
             nav.addItem(new AppNavItem("Registro", RegistroView.class, "la la-user"));
+
+        }
+        if (accessChecker.hasAccess(UserPageView.class)) {
+            nav.addItem(new AppNavItem("Dashboard", UserPageView.class, "la la-user"));
 
         }
         if (accessChecker.hasAccess(ESIngView.class)) {
