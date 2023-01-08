@@ -7,11 +7,12 @@ import javax.validation.constraints.Email;
 public class Usuario extends AbstractEntity {
 
     private String nombre;
-    private String apellidos;
+    private String username;
     private String dni;
     private String telefono;
     @Email
     private String email;
+    
 
     public String getNombre() {
         return nombre;
@@ -19,11 +20,11 @@ public class Usuario extends AbstractEntity {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-    public String getApellidos() {
-        return apellidos;
+    public String getUsername() {
+        return username;
     }
-    public void setApellidos(String apellidos) {
-        this.apellidos = apellidos;
+    public void setUsername(String username) {
+        this.username = username;
     }
     public String getDni() {
         return dni;

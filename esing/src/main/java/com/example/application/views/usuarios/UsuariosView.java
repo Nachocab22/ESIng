@@ -27,7 +27,7 @@ import javax.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 
-@PageTitle("Usuarios")
+@PageTitle("Usuarios-Registro")
 @Route(value = "usuarios/:usuarioID?/:action?(edit)", layout = MainLayout.class)
 @RolesAllowed("ADMIN")
 public class UsuariosView extends Div implements BeforeEnterObserver {
@@ -38,7 +38,7 @@ public class UsuariosView extends Div implements BeforeEnterObserver {
     private final Grid<Usuario> grid = new Grid<>(Usuario.class, false);
 
     private TextField nombre;
-    private TextField apellidos;
+    private TextField username;
     private TextField dni;
     private TextField telefono;
     private TextField email;
@@ -67,7 +67,7 @@ public class UsuariosView extends Div implements BeforeEnterObserver {
 
         // Configure Grid
         grid.addColumn("nombre").setAutoWidth(true);
-        grid.addColumn("apellidos").setAutoWidth(true);
+        grid.addColumn("username").setAutoWidth(true);
         grid.addColumn("dni").setAutoWidth(true);
         grid.addColumn("telefono").setAutoWidth(true);
         grid.addColumn("email").setAutoWidth(true);
@@ -144,11 +144,11 @@ public class UsuariosView extends Div implements BeforeEnterObserver {
 
         FormLayout formLayout = new FormLayout();
         nombre = new TextField("Nombre");
-        apellidos = new TextField("Apellidos");
+        username = new TextField("Username");
         dni = new TextField("Dni");
         telefono = new TextField("Telefono");
         email = new TextField("Email");
-        formLayout.add(nombre, apellidos, dni, telefono, email);
+        formLayout.add(nombre, username, dni, telefono, email);
 
         editorDiv.add(formLayout);
         createButtonLayout(editorLayoutDiv);

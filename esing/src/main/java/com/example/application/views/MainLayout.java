@@ -91,7 +91,7 @@ public class MainLayout extends AppLayout {
 
         }
         if (accessChecker.hasAccess(UsuariosView.class)) {
-            nav.addItem(new AppNavItem("Usuarios", UsuariosView.class, "la la-columns"));
+            nav.addItem(new AppNavItem("Usuarios-Registro", UsuariosView.class, "la la-columns"));
 
         }
 

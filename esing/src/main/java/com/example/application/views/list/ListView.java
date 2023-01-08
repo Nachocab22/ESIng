@@ -85,7 +85,7 @@ public class ListView extends VerticalLayout {
 	private Component getToolbar() {
 		// TODO Auto-generated method stub
 		
-		filterText.setPlaceholder("Filter by name");
+		filterText.setPlaceholder("Filter by anything");
 		filterText.setClearButtonVisible(true);
 		filterText.setValueChangeMode(ValueChangeMode.LAZY);
 		filterText.addValueChangeListener(e -> updateList());
