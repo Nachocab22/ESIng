@@ -1,39 +1,54 @@
 package com.example.application.views.movimientos;
 
 import com.example.application.data.entity.Movimiento;
-import com.example.application.data.service.MovimientoRepository;
+import com.example.application.data.entity.User;
 import com.example.application.data.service.MovimientoService;
+import com.example.application.security.AuthenticatedUser;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
+import com.vaadin.flow.component.textfield.IntegerField;
+import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.ValidationException;
+import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.StreamResource;
+import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
+
+import java.io.ByteArrayInputStream;
 import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 
-@PageTitle("Movimientos")
-@Route(value = "movimientoUser", layout = MainLayout.class)
-@RolesAllowed("USER")
+@PageTitle("Mis Movimientos")
+@Route(value = "movimientosUser", layout = MainLayout.class)
+@RolesAllowed("ADMIN")
 public class MovimientosUserView extends Div implements BeforeEnterObserver {
 
 	private final String MOVIMIENTO_ID = "movimientoID";
+    private final String MOVIMIENTO_EDIT_ROUTE_TEMPLATE = "movimientos/%s/edit";
+
     private final Grid<Movimiento> grid = new Grid<>(Movimiento.class, false);
 
     private final BeanValidationBinder<Movimiento> binder;
@@ -46,11 +61,13 @@ public class MovimientosUserView extends Div implements BeforeEnterObserver {
     public MovimientosUserView(MovimientoService movimientoService) {
         this.movimientoService = movimientoService;
         addClassNames("movimientos-view");
-
+        
         // Create UI
         SplitLayout splitLayout = new SplitLayout();
 
         createGridLayout(splitLayout);
+
+        add(splitLayout);
 
         // Configure Grid
         grid.addColumn("cuenta").setAutoWidth(true);
@@ -66,14 +83,17 @@ public class MovimientosUserView extends Div implements BeforeEnterObserver {
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 
         // when a row is selected or deselected, populate form
-        
+        grid.asSingleSelect().addValueChangeListener(event -> {
+            if (event.getValue() != null) {
+                UI.getCurrent().navigate(String.format(MOVIMIENTO_EDIT_ROUTE_TEMPLATE, event.getValue().getId()));
+            } else {
+                clearForm();
+                UI.getCurrent().navigate(MovimientosView.class);
+            }
+        });
 
         // Configure Form
-        binder = new BeanValidationBinder<>(Movimiento.class);
-
-        // Bind fields. This is where you'd define e.g. validation rules
-
-        binder.bindInstanceFields(this);
+        binder = new BeanValidationBinder<>(Movimiento.class);   
     }
 
     @Override
@@ -93,7 +113,6 @@ public class MovimientosUserView extends Div implements BeforeEnterObserver {
             }
         }
     }
-
 
     private void createGridLayout(SplitLayout splitLayout) {
         Div wrapper = new Div();

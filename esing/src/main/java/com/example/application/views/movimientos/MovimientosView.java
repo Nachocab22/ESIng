@@ -1,7 +1,6 @@
 package com.example.application.views.movimientos;
 
 import com.example.application.data.entity.Movimiento;
-import com.example.application.data.service.MovimientoRepository;
 import com.example.application.data.service.MovimientoService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.UI;
@@ -15,7 +14,6 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
-import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
@@ -33,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 
 @PageTitle("Movimientos")
-@Route(value = "movimiento/:movimientoID?/:action?(edit)", layout = MainLayout.class)
+@Route(value = "movimientos/:movimientoID?/:action?(edit)", layout = MainLayout.class)
 @RolesAllowed("ADMIN")
 public class MovimientosView extends Div implements BeforeEnterObserver {
 
@@ -50,8 +48,8 @@ public class MovimientosView extends Div implements BeforeEnterObserver {
     private DatePicker fecha_op;
     private IntegerField tipo;
 
-    private final Button cancel = new Button("Cancel");
-    private final Button save = new Button("Save");
+    private final Button cancelar = new Button("Cancelar");
+    private final Button guardar = new Button("Guardar");
     private final Button eliminar = new Button("Eliminar");
 
     private final BeanValidationBinder<Movimiento> binder;
@@ -103,12 +101,12 @@ public class MovimientosView extends Div implements BeforeEnterObserver {
 
         binder.bindInstanceFields(this);
 
-        cancel.addClickListener(e -> {
+        cancelar.addClickListener(e -> {
             clearForm();
             refreshGrid();
         });
         
-        save.addClickListener(e -> {
+        guardar.addClickListener(e -> {
             try {
                 if (this.movimiento == null) {
                     this.movimiento = new Movimiento();
@@ -117,10 +115,10 @@ public class MovimientosView extends Div implements BeforeEnterObserver {
                 movimientoService.update(this.movimiento);
                 clearForm();
                 refreshGrid();
-                Notification.show("Movimiento details stored.");
+                Notification.show("Movimiento guardado.");
                 UI.getCurrent().navigate(MovimientosView.class);
             } catch (ValidationException validationException) {
-                Notification.show("An exception happened while trying to store the movimiento details.");
+                Notification.show("ha ocurrido una excepción al intentar guardar el movimiento.");
             }
         });
         
@@ -151,8 +149,8 @@ public class MovimientosView extends Div implements BeforeEnterObserver {
             } else {
                 Notification.show(String.format("The requested movimiento was not found, ID = %s", movimientoId.get()), 3000,
                         Notification.Position.BOTTOM_START);
-                // when a row is selected but the data is no longer available,
-                // refresh grid
+                // cuando no esta disponible una linea seleccionada,
+                // refresca el grid
                 refreshGrid();
                 event.forwardTo(MovimientosView.class);
             }
@@ -197,9 +195,9 @@ public class MovimientosView extends Div implements BeforeEnterObserver {
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.setClassName("button-layout");
         eliminar.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
-        cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        buttonLayout.add(save, cancel, eliminar);
+        cancelar.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        guardar.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        buttonLayout.add(guardar, cancelar, eliminar);
         editorLayoutDiv.add(buttonLayout);
     }
 
