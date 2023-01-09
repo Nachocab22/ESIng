@@ -77,6 +77,10 @@ public class MainLayout extends AppLayout {
             nav.addItem(new AppNavItem("Registro", RegistroView.class, "la la-user"));
 
         }
+        if (accessChecker.hasAccess(UsuariosView.class)) {
+            nav.addItem(new AppNavItem("Usuarios", UsuariosView.class, "la la-columns"));
+
+        }
         if (accessChecker.hasAccess(ESIngView.class)) {
             nav.addItem(new AppNavItem("ESIng", ESIngView.class, "la la-scroll"));
 
@@ -90,10 +94,7 @@ public class MainLayout extends AppLayout {
             nav.addItem(new AppNavItem("Pago", PagoView.class, "la la-credit-card"));
 
         }
-        if (accessChecker.hasAccess(UsuariosView.class)) {
-            nav.addItem(new AppNavItem("Usuarios", UsuariosView.class, "la la-columns"));
 
-        }
 
         return nav;
     }

@@ -1,21 +1,38 @@
 package com.example.application.data.entity;
 
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+
+import com.example.application.data.Role;
 
 @Entity(name = "usuario")
 @Table(name = "usuario")
 public class Usuario extends AbstractEntity {
-
+	
+	@NotNull
     private String nombre;
+	@NotNull
     private String username;
+	@Column(length = 9)
     private String dni;
+	@Column(length = 9)
     private String telefono;
     @Email
     private String email;
+    @NotNull
     private String hashedPassword;
-    
+    @Enumerated(EnumType.STRING)
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<Role> roles;
 
     public String getNombre() {
         return nombre;
@@ -54,5 +71,10 @@ public class Usuario extends AbstractEntity {
     public void setHashedPassword(String hashedPassword) {
         this.hashedPassword = hashedPassword;
     }
-    
+    public Set<Role> getRoles() {
+        return roles;
+    }
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
 }
