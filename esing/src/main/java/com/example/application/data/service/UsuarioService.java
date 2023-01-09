@@ -1,6 +1,8 @@
 package com.example.application.data.service;
 
 import com.example.application.data.entity.Usuario;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,14 @@ public class UsuarioService {
 
     public int count() {
         return (int) repository.count();
+    }
+    
+    public List<Usuario> findAllUsuarios(String stringFilter){
+    	if(stringFilter == null || stringFilter.isEmpty()) {
+    		return repository.findAll();
+    	}else {
+    		return repository.search(stringFilter);
+    	}
     }
 
 }

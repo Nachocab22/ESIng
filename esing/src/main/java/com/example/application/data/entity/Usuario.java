@@ -1,9 +1,11 @@
 package com.example.application.data.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.Email;
 
-@Entity
+@Entity(name = "usuario")
+@Table(name = "usuario")
 public class Usuario extends AbstractEntity {
 
     private String nombre;
@@ -12,6 +14,7 @@ public class Usuario extends AbstractEntity {
     private String telefono;
     @Email
     private String email;
+    private String hashedPassword;
     
 
     public String getNombre() {
@@ -45,4 +48,11 @@ public class Usuario extends AbstractEntity {
         this.email = email;
     }
 
+    public String getHashedPassword() {
+        return hashedPassword;
+    }
+    public void setHashedPassword(String hashedPassword) {
+        this.hashedPassword = hashedPassword;
+    }
+    
 }
