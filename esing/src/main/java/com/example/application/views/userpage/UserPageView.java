@@ -11,6 +11,8 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 
+//CHANGE PERMISSIONS (ANONYMOUS ARE NOT ALLOWED, THEY ARE ALLOWED BEFORE ADDING ACCOUNTS AND CARDS)
+
 @PageTitle("ESIng")
 @Route(value = "user-page", layout = MainLayout.class)
 @AnonymousAllowed
@@ -21,17 +23,11 @@ public class UserPageView extends Main implements HasComponents, HasStyle {
     public UserPageView() {
         constructUI();
 
-        dataContainer.add(new UserPageViewCard("Sus cuentas"));
+        //Add user accounts and user cards
+        dataContainer.add(new UserPageViewCard("Sus cuentas", null, null));
         dataContainer.add(new H1());
-        dataContainer.add(new UserPageViewCard("Sus tarjetas"));
+        dataContainer.add(new UserPageViewCard("Sus tarjetas", null, null));
         dataContainer.add(new H1());
-        dataContainer.add(new UserPageViewCard("Cosas"));
-        dataContainer.add(new H1());
-        dataContainer.add(new UserPageViewCard("Milky way on mountains"));
-        dataContainer.add(new H1());
-        dataContainer.add(new UserPageViewCard("Mountain with fog"));
-        dataContainer.add(new H1());
-        dataContainer.add(new UserPageViewCard("Mountain at night"));
     }
 
     private void constructUI() {

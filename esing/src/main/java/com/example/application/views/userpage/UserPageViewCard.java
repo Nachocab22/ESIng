@@ -1,12 +1,13 @@
 package com.example.application.views.userpage;
 
+import com.example.application.data.entity.Cuenta;
 import com.example.application.data.entity.Tarjeta;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.*;
 
 public class UserPageViewCard extends ListItem{
 
-    public UserPageViewCard(String text) {
+    public UserPageViewCard(String text, Cuenta cuentas, Tarjeta tarjetas) {
         addClassNames("bg-contrast-5", "flex", "flex-col", "items-start", "p-m", "rounded-l");
 
         /*
@@ -22,23 +23,18 @@ public class UserPageViewCard extends ListItem{
 
         Span table = new Span();
         table.addClassNames("text-s", "text-secondary");
-        //Grid<Tarjeta> gridAccounts = new Grid<>(Tarjeta.class, false);
+        if(cuentas != null) {
+            Grid<Cuenta> gridAccounts = new Grid<>(Cuenta.class, false);
+            //ADD CUENTAs TO GRID
+            table.add(new Grid<Cuenta>());
+        }
+        if(tarjetas != null) {
+            Grid<Tarjeta> gridAccounts = new Grid<>(Tarjeta.class, false);
+            //ADD TARJETAs TO GRID
+            table.add(new Grid<Tarjeta>());
+        }
 
-        //table.add(new Grid<Tarjeta>());
-
-        Span subtitle = new Span();
-        subtitle.addClassNames("text-s", "text-secondary");
-        subtitle.setText("Card subtitle");
-
-        Paragraph description = new Paragraph(
-                "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut.");
-        description.addClassName("my-m");
-
-        Span badge = new Span();
-        badge.getElement().setAttribute("theme", "badge");
-        badge.setText("Label");
-
-        add(header, subtitle, description, badge);
+        add(header, table);
 
     }
 }
