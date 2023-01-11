@@ -21,12 +21,17 @@ public class SecurityConfiguration extends VaadinWebSecurity {
         return new BCryptPasswordEncoder();
     }
 
+    
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.authorizeRequests().requestMatchers(new AntPathRequestMatcher("/images/*.png")).permitAll();
+        http.authorizeRequests()
+            .requestMatchers(new AntPathRequestMatcher("/images/*.png")).permitAll()
+            .antMatchers("/h2-console/**").permitAll();
         super.configure(http);
         setLoginView(http, LoginView.class, LOGOUT_URL);
+        http.csrf().disable();
+        http.headers().frameOptions().disable();
     }
 
 }

@@ -19,7 +19,7 @@ import javax.annotation.security.RolesAllowed;
 
 @PageTitle("Introduce tarjeta de credito")
 @Route(value = "credit-card-form", layout = MainLayout.class)
-@RolesAllowed("USER")
+@RolesAllowed("ADMIN")
 public class IntroducetarjetadecreditoView extends Div {
 
     private TextField cardNumber = new TextField("Credit card number");

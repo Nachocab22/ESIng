@@ -5,6 +5,8 @@ import com.example.application.components.appnav.AppNavItem;
 import com.example.application.data.entity.User;
 import com.example.application.security.AuthenticatedUser;
 import com.example.application.views.esing.ESIngView;
+import com.example.application.views.incidencias.IncidenciaAdminView;
+import com.example.application.views.incidencias.IncidenciaView;
 import com.example.application.views.introducetarjetadecredito.IntroducetarjetadecreditoView;
 import com.example.application.views.pago.PagoView;
 import com.example.application.views.registro.RegistroView;
@@ -28,6 +30,9 @@ import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import java.io.ByteArrayInputStream;
 import java.util.Optional;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * The main view is a top-level placeholder for other views.
@@ -93,6 +98,13 @@ public class MainLayout extends AppLayout {
         if (accessChecker.hasAccess(UsuariosView.class)) {
             nav.addItem(new AppNavItem("Usuarios", UsuariosView.class, "la la-columns"));
 
+        }
+        if (accessChecker.hasAccess(IncidenciaView.class)) {
+        	nav.addItem(new AppNavItem("Contacte con su gestor", IncidenciaView.class, "la la-incidence"));
+        }
+        
+        if (accessChecker.hasAccess(IncidenciaAdminView.class)) {
+        	nav.addItem(new AppNavItem("Lista de incidencias" , IncidenciaAdminView.class, "la la-incidence-admin"));
         }
 
         return nav;
