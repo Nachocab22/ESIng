@@ -1,3 +1,4 @@
+//Commit 9 Jan
 package com.example.application.views;
 
 import com.example.application.components.appnav.AppNav;
@@ -7,6 +8,8 @@ import com.example.application.security.AuthenticatedUser;
 import com.example.application.views.esing.ESIngView;
 import com.example.application.views.introducetarjetadecredito.IntroducetarjetadecreditoView;
 import com.example.application.views.pago.PagoView;
+import com.example.application.views.userpage.UserPageView;
+import com.example.application.views.movimientos.MovimientosView;
 import com.example.application.views.registro.RegistroView;
 import com.example.application.views.usuarios.UsuariosView;
 import com.vaadin.flow.component.applayout.AppLayout;
@@ -72,20 +75,31 @@ public class MainLayout extends AppLayout {
         // AppNav is not yet an official component.
         // For documentation, visit https://github.com/vaadin/vcf-nav#readme
         AppNav nav = new AppNav();
+        
+        if (accessChecker.hasAccess(ESIngView.class)) {
+            nav.addItem(new AppNavItem("ESIng", ESIngView.class, "la la-scroll"));
+
+        }
 
         if (accessChecker.hasAccess(RegistroView.class)) {
             nav.addItem(new AppNavItem("Registro", RegistroView.class, "la la-user"));
 
         }
-        if (accessChecker.hasAccess(ESIngView.class)) {
-            nav.addItem(new AppNavItem("ESIng", ESIngView.class, "la la-scroll"));
-
+        
+        if (accessChecker.hasAccess(UserPageView.class)) {
+            nav.addItem(new AppNavItem("Dashboard", UserPageView.class, "la la-user"));
+            
         }
+        
         if (accessChecker.hasAccess(IntroducetarjetadecreditoView.class)) {
-            nav.addItem(new AppNavItem("Introduce tarjeta de credito", IntroducetarjetadecreditoView.class,
-                    "la la-credit-card"));
-
+            nav.addItem(new AppNavItem("Introduce tarjeta de credito", IntroducetarjetadecreditoView.class, "la la-credit-card"));
+            
         }
+           
+        if (accessChecker.hasAccess(MovimientosView.class)) {
+        	nav.addItem(new AppNavItem("Movimientos", MovimientosView.class, "la la-colums"));
+        }
+
         if (accessChecker.hasAccess(PagoView.class)) {
             nav.addItem(new AppNavItem("Pago", PagoView.class, "la la-credit-card"));
 

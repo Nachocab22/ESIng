@@ -18,10 +18,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
-
-@Entity
+@Entity(name = "user")
 @Table(name = "application_user")
 public class User extends AbstractEntity {
 	
@@ -89,8 +86,31 @@ public class User extends AbstractEntity {
         this.profilePicture = profilePicture;
     }
 
-    //En teoria de este modo añadimos los metodos de crud para User con id tipo UUID
-    //En el caso de delete: deleteById(userx.getId()); por ejemplo
-    @Repository
-    public interface UserRepository extends CrudRepository<User, UUID> {}
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+    public String getAddress() {
+        return address;
+    }
+    public void setAddress(String address) {
+        this.address = address;
+    }
+    
+    public String getPhone() {
+        return phone;
+    }
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+    
+    public String getdni() {
+        return dni;
+    }
+    public void setdni(String dni) {
+        this.dni = dni;
+    }
 }

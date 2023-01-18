@@ -1,6 +1,8 @@
 package com.example.application.data.service;
 
 import com.example.application.data.entity.User;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,30 @@ public class UserService {
 
     public int count() {
         return (int) repository.count();
+    } 
+    
+    public List<User> findAllUsers(String stringFilter){
+    	if(stringFilter == null || stringFilter.isEmpty()) {
+    		return repository.findAll();
+    	}else {
+    		return repository.search(stringFilter);
+    	}
     }
-
+    
+    public long countUsers() {
+    	return repository.count();	
+    }
+    
+    public void deleteUser(User user) {
+    	repository.delete(user);
+    }
+    
+    public void saveUser(User user) {
+    	if(user == null) {
+    		System.err.println("Contact is null.");
+    		return;
+    	}
+    	
+    	repository.save(user);
+    }
 }
