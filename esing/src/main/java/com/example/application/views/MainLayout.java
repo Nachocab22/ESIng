@@ -6,6 +6,8 @@ import com.example.application.components.appnav.AppNavItem;
 import com.example.application.data.entity.User;
 import com.example.application.security.AuthenticatedUser;
 import com.example.application.views.esing.ESIngView;
+import com.example.application.views.incidencia.IncidenciaAdminView;
+import com.example.application.views.incidencia.IncidenciaView;
 import com.example.application.views.introducetarjetadecredito.IntroducetarjetadecreditoView;
 import com.example.application.views.pago.PagoView;
 import com.example.application.views.userpage.UserPageView;
@@ -108,6 +110,15 @@ public class MainLayout extends AppLayout {
             nav.addItem(new AppNavItem("Usuarios", UsuariosView.class, "la la-columns"));
 
         }
+        
+        if (accessChecker.hasAccess(IncidenciaView.class)) {
+        	nav.addItem(new AppNavItem("Contacte con su gestor", IncidenciaView.class, "la la-incidence"));
+        }
+        
+        if (accessChecker.hasAccess(IncidenciaAdminView.class)) {
+        	nav.addItem(new AppNavItem("Lista de incidencias" , IncidenciaAdminView.class, "la la-incidence-admin"));
+        }
+        
 
         return nav;
     }
