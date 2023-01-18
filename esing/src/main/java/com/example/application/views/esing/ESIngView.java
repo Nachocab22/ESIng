@@ -24,18 +24,18 @@ public class ESIngView extends Main implements HasComponents, HasStyle {
     public ESIngView() {
         constructUI();
 
-        imageContainer.add(new ESIngViewCard("Snow mountains under stars",
-                "https://images.unsplash.com/photo-1519681393784-d120267933ba?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80"));
-        imageContainer.add(new ESIngViewCard("Snow covered mountain",
-                "https://images.unsplash.com/photo-1512273222628-4daea6e55abb?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=750&q=80"));
-        imageContainer.add(new ESIngViewCard("River between mountains",
-                "https://images.unsplash.com/photo-1536048810607-3dc7f86981cb?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=375&q=80"));
-        imageContainer.add(new ESIngViewCard("Milky way on mountains",
-                "https://images.unsplash.com/photo-1515705576963-95cad62945b6?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=750&q=80"));
-        imageContainer.add(new ESIngViewCard("Mountain with fog",
-                "https://images.unsplash.com/photo-1513147122760-ad1d5bf68cdb?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"));
-        imageContainer.add(new ESIngViewCard("Mountain at night",
-                "https://images.unsplash.com/photo-1562832135-14a35d25edef?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=815&q=80"));
+        imageContainer.add(new ESIngViewCard("Transacciones rapidas y sencillas online",
+                "https://leonikapiel.com/wp-content/uploads/2021/02/monedero-artesanal-de-piel-cartera-de-piel-azul-colores-leonikapiel-monedero-artesano-de-cuero-de-moda-para-mujer-leonika-piel-4-2.jpg"));
+        imageContainer.add(new ESIngViewCard("La seguridad de un banco tradicional a tu alcance",
+                "https://d500.epimg.net/cincodias/imagenes/2019/11/29/companias/1575024209_206984_1576845228_noticia_normal.jpg"));
+        imageContainer.add(new ESIngViewCard("Comprueba todos tus movimientos en cualquier momento",
+                "https://www.claseejecutiva.uc.cl/wp-content/uploads/2021/11/estado-de-resultados-que-es-el-estado-de-resultado-w-min-thegem-blog-timeline-large.jpg"));
+        imageContainer.add(new ESIngViewCard("Asistencia personalizada con nuestros operadores",
+                "https://criteriosdigital.com/wp-content/uploads/2021/06/WAVEBREAKMEDIA-FREEPIK.jpg"));
+        imageContainer.add(new ESIngViewCard("Cree su cuenta totalmente gratis",
+                "https://www.enter.co/wp-content/uploads/2018/07/john-schnobrich-520023-unsplash-1024x768.jpg"));
+        imageContainer.add(new ESIngViewCard("Administra tu dinero y planea tus ahorros",
+                "https://d500.epimg.net/cincodias/imagenes/2021/01/11/extras/1610380859_885429_1610382172_noticia_normal.jpg"));
 
     }
 
@@ -46,21 +46,16 @@ public class ESIngView extends Main implements HasComponents, HasStyle {
         container.addClassNames("items-center", "justify-between");
 
         VerticalLayout headerContainer = new VerticalLayout();
-        H2 header = new H2("Beautiful photos");
+        H2 header = new H2("ESIng");
         header.addClassNames("mb-0", "mt-xl", "text-3xl");
-        Paragraph description = new Paragraph("Royalty free photos and pictures, courtesy of Unsplash");
+        Paragraph description = new Paragraph("Imagenes de stock");
         description.addClassNames("mb-xl", "mt-0", "text-secondary");
         headerContainer.add(header, description);
-
-        Select<String> sortBy = new Select<>();
-        sortBy.setLabel("Sort by");
-        sortBy.setItems("Popularity", "Newest first", "Oldest first");
-        sortBy.setValue("Popularity");
 
         imageContainer = new OrderedList();
         imageContainer.addClassNames("gap-m", "grid", "list-none", "m-0", "p-0");
 
-        container.add(header, sortBy);
+        container.add(header);
         add(container, imageContainer);
 
     }

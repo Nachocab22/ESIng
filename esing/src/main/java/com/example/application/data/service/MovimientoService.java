@@ -1,30 +1,33 @@
 package com.example.application.data.service;
 
-import com.example.application.data.entity.Usuario;
+import com.example.application.data.entity.Movimiento;
+import com.example.application.data.entity.User;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UsuarioService {
+public class MovimientoService {
 
-    private final UsuarioRepository repository;
+    private final MovimientoRepository repository;
 
     @Autowired
-    public UsuarioService(UsuarioRepository repository) {
+    public MovimientoService(MovimientoRepository repository) {
         this.repository = repository;
     }
 
-    public Optional<Usuario> get(UUID id) {
+    public Optional<Movimiento> get(UUID id) {
         return repository.findById(id);
     }
 
-    public Usuario update(Usuario entity) {
+    public Movimiento update(Movimiento entity) {
         return repository.save(entity);
     }
 
@@ -32,20 +35,19 @@ public class UsuarioService {
         repository.deleteById(id);
     }
 
-    public Page<Usuario> list(Pageable pageable) {
+    public Page<Movimiento> list(Pageable pageable) {
         return repository.findAll(pageable);
     }
 
-    public int count() {
-        return (int) repository.count();
-    }
-    
-    public List<Usuario> findAllUsuarios(String stringFilter){
+    public List<Movimiento> findAllMovimientos(String stringFilter){
     	if(stringFilter == null || stringFilter.isEmpty()) {
     		return repository.findAll();
     	}else {
     		return repository.search(stringFilter);
     	}
     }
-
+    
+    public int count() {
+        return (int) repository.count();
+    }
 }

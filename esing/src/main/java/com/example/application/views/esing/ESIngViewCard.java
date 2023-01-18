@@ -14,7 +14,7 @@ public class ESIngViewCard extends ListItem {
         Div div = new Div();
         div.addClassNames("bg-contrast", "flex items-center", "justify-center", "mb-m", "overflow-hidden",
                 "rounded-m w-full");
-        div.setHeight("160px");
+        div.setHeight("200px");
 
         Image image = new Image();
         image.setWidth("100%");
@@ -23,23 +23,10 @@ public class ESIngViewCard extends ListItem {
 
         div.add(image);
 
-        Span header = new Span();
-        header.addClassNames("text-xl", "font-semibold");
-        header.setText("Title");
-
-        Span subtitle = new Span();
-        subtitle.addClassNames("text-s", "text-secondary");
-        subtitle.setText("Card subtitle");
-
-        Paragraph description = new Paragraph(
-                "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut.");
+        Paragraph description = new Paragraph(text);
         description.addClassName("my-m");
 
-        Span badge = new Span();
-        badge.getElement().setAttribute("theme", "badge");
-        badge.setText("Label");
-
-        add(div, header, subtitle, description, badge);
+        add(div, description);
 
     }
 }

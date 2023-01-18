@@ -1,7 +1,7 @@
 package com.example.application.views.registro;
 import com.example.application.data.Role;
-import com.example.application.data.entity.User;
-import com.example.application.data.service.UserService;
+import com.example.application.data.entity.Usuario;
+import com.example.application.data.service.UsuarioService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -28,25 +28,29 @@ import java.util.Set;
 import javax.annotation.security.RolesAllowed;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+//import com.vaadin.data.validator.Validator;
 
 @PageTitle("Registro")
-@Route(value = "sign_in", layout = MainLayout.class)
+@Route(value = "sign_up", layout = MainLayout.class)
 @RolesAllowed("ADMIN")
 @Uses(Icon.class)
 public class RegistroView extends Div {
 
     private TextField username = new TextField("Username");
-    private TextField name = new TextField("Name");
-    private PasswordField hashedPassword = new PasswordField("Password");
+    private TextField nombre = new TextField("Nombre");
+    private TextField dni = new TextField("DNI");
+    private TextField telefono = new TextField("Telefono");
+    private TextField email = new TextField("Email");
+    private PasswordField hashedPassword = new PasswordField("Contraseña");
 
     private Button cancel = new Button("Cancel");
     private Button save = new Button("Save");
      
-    private Binder<User> binder = new Binder<>(User.class);
+    private Binder<Usuario> binder = new Binder<>(Usuario.class);
     private Set<Role> usrRol;
     
 
-    public RegistroView(UserService userService) {
+    public RegistroView(UsuarioService usuarioService) {
         addClassName("registro-view");
 
         add(createTitle());
@@ -62,14 +66,14 @@ public class RegistroView extends Div {
         	BCryptPasswordEncoder bcryptPasswordEncoder = new BCryptPasswordEncoder();
         	hashedPassword.setValue(bcryptPasswordEncoder.encode(hashedPassword.getValue()));
         	binder.getBean().setRoles(usrRol);
-            userService.update(binder.getBean());
+            usuarioService.update(binder.getBean());
             Notification.show(binder.getBean().getClass().getSimpleName() + " details stored.");
             clearForm();
         });
     }
 
     private void clearForm() {
-        binder.setBean(new User());
+        binder.setBean(new Usuario());
     }
 
     private Component createTitle() {
@@ -78,7 +82,7 @@ public class RegistroView extends Div {
 
     private Component createFormLayout() {
         FormLayout formLayout = new FormLayout();
-        formLayout.add(username, name, hashedPassword);
+        formLayout.add(username, nombre, dni, telefono, email, hashedPassword);
         return formLayout;
     }
 
@@ -91,33 +95,6 @@ public class RegistroView extends Div {
         return buttonLayout;
     }
 
-    private static class PhoneNumberField extends CustomField<String> {
-        private ComboBox<String> countryCode = new ComboBox<>();
-        private TextField number = new TextField();
-
-        @Override
-        protected String generateModelValue() {
-            if (countryCode.getValue() != null && number.getValue() != null) {
-                String s = countryCode.getValue() + " " + number.getValue();
-                return s;
-            }
-            return "";
-        }
-
-        @Override
-        protected void setPresentationValue(String phoneNumber) {
-            String[] parts = phoneNumber != null ? phoneNumber.split(" ", 2) : new String[0];
-            if (parts.length == 1) {
-                countryCode.clear();
-                number.setValue(parts[0]);
-            } else if (parts.length == 2) {
-                countryCode.setValue(parts[0]);
-                number.setValue(parts[1]);
-            } else {
-                countryCode.clear();
-                number.clear();
-            }
-        }
-    }
+    //public class telefonoValidator implements Validator<String> { }
 
 }

@@ -17,7 +17,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
-@Entity
+@Entity(name = "user")
 @Table(name = "application_user")
 public class User extends AbstractEntity {
 	
@@ -85,4 +85,31 @@ public class User extends AbstractEntity {
         this.profilePicture = profilePicture;
     }
 
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+    public String getAddress() {
+        return address;
+    }
+    public void setAddress(String address) {
+        this.address = address;
+    }
+    
+    public String getPhone() {
+        return phone;
+    }
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+    
+    public String getdni() {
+        return dni;
+    }
+    public void setdni(String dni) {
+        this.dni = dni;
+    }
 }

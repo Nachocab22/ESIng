@@ -22,15 +22,15 @@ import javax.annotation.security.RolesAllowed;
 @RolesAllowed("USER")
 public class IntroducetarjetadecreditoView extends Div {
 
-    private TextField cardNumber = new TextField("Credit card number");
-    private TextField cardholderName = new TextField("Cardholder name");
-    private Select<Integer> month = new Select<>();
-    private Select<Integer> year = new Select<>();
-    private ExpirationDateField expiration = new ExpirationDateField("Expiration date", month, year);
+    private TextField cardNumber = new TextField("Número de la tarjeta");
+    private TextField cardholderName = new TextField("Nombre del propietario");
+    private Select<Integer> mes = new Select<>();
+    private Select<Integer> año = new Select<>();
+    private ExpirationDateField expiration = new ExpirationDateField("Fecha de caducidad", mes, año);
     private PasswordField csc = new PasswordField("CSC");
 
-    private Button cancel = new Button("Cancel");
-    private Button submit = new Button("Submit");
+    private Button cancel = new Button("Cancelar");
+    private Button submit = new Button("Enviar");
 
     public IntroducetarjetadecreditoView() {
         addClassName("introducetarjetadecredito-view");
@@ -48,7 +48,7 @@ public class IntroducetarjetadecreditoView extends Div {
     }
 
     private Component createTitle() {
-        return new H3("Credit Card");
+        return new H3("Tarjeta de Crédito");
     }
 
     private Component createFormLayout() {
@@ -65,10 +65,10 @@ public class IntroducetarjetadecreditoView extends Div {
         cardNumber.setPreventInvalidInput(true);
         cardNumber.setRequired(true);
         cardNumber.setErrorMessage("Please enter a valid credit card number");
-        month.setPlaceholder("Month");
-        month.setItems(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
-        year.setPlaceholder("Year");
-        year.setItems(20, 21, 22, 23, 24, 25);
+        mes.setPlaceholder("Mes");
+        mes.setItems(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
+        año.setPlaceholder("Año");
+        año.setItems(20, 21, 22, 23, 24, 25);
         submit.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         buttonLayout.add(submit);
         buttonLayout.add(cancel);

@@ -3,6 +3,7 @@ package com.example.application.views.usuarios;
 import com.example.application.data.entity.Usuario;
 import com.example.application.data.service.UsuarioService;
 import com.example.application.views.MainLayout;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -13,9 +14,11 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
+import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.ValidationException;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
@@ -36,16 +39,19 @@ public class UsuariosView extends Div implements BeforeEnterObserver {
     private final String USUARIO_EDIT_ROUTE_TEMPLATE = "usuarios/%s/edit";
 
     private final Grid<Usuario> grid = new Grid<>(Usuario.class, false);
-
+    
+    private TextField filterText = new TextField();
+    
     private TextField nombre;
-    private TextField apellidos;
+    private TextField username;
     private TextField dni;
     private TextField telefono;
     private TextField email;
 
-    private final Button cancel = new Button("Cancel");
-    private final Button save = new Button("Save");
-
+    private final Button cancel = new Button("Cancelar");
+    private final Button save = new Button("Guardar");
+    private final Button delete = new Button("Borrar");
+    
     private final BeanValidationBinder<Usuario> binder;
 
     private Usuario usuario;
@@ -67,7 +73,7 @@ public class UsuariosView extends Div implements BeforeEnterObserver {
 
         // Configure Grid
         grid.addColumn("nombre").setAutoWidth(true);
-        grid.addColumn("apellidos").setAutoWidth(true);
+        grid.addColumn("username").setAutoWidth(true);
         grid.addColumn("dni").setAutoWidth(true);
         grid.addColumn("telefono").setAutoWidth(true);
         grid.addColumn("email").setAutoWidth(true);
@@ -100,18 +106,33 @@ public class UsuariosView extends Div implements BeforeEnterObserver {
 
         save.addClickListener(e -> {
             try {
-                if (this.usuario == null) {
-                    this.usuario = new Usuario();
+                if (this.usuario != null) {
+                	binder.writeBean(this.usuario);
+                    usuarioService.update(this.usuario);
+                    Notification.show("Detalles de Usuario guardados");
+                }else {
+                	Notification.show("No se pueden generar usuario desde esta pagina, dirijase a registro.");
                 }
-                binder.writeBean(this.usuario);
-                usuarioService.update(this.usuario);
                 clearForm();
-                refreshGrid();
-                Notification.show("Usuario details stored.");
+                refreshGrid(); 
                 UI.getCurrent().navigate(UsuariosView.class);
             } catch (ValidationException validationException) {
-                Notification.show("An exception happened while trying to store the usuario details.");
-            }
+                Notification.show("Ocurrió una excepción al intentar guardar los detalles del usuario.");
+            }                 
+        });
+        delete.addClickListener(e ->{
+	       	try {
+	       		if(this.usuario != null) {
+	       			binder.writeBean(this.usuario);
+	       			usuarioService.delete(this.usuario.getId());
+	       			Notification.show("Usuario Borrado");
+	       		}
+	       		clearForm();
+	       		refreshGrid();
+	       		UI.getCurrent().navigate(UsuariosView.class);
+	       	} catch(ValidationException validationException) {
+	       		Notification.show("Ocurrió una excepción al intentar eliminar al usuario.");
+	       	}
         });
 
     }
@@ -144,11 +165,11 @@ public class UsuariosView extends Div implements BeforeEnterObserver {
 
         FormLayout formLayout = new FormLayout();
         nombre = new TextField("Nombre");
-        apellidos = new TextField("Apellidos");
+        username = new TextField("Username");
         dni = new TextField("Dni");
         telefono = new TextField("Telefono");
         email = new TextField("Email");
-        formLayout.add(nombre, apellidos, dni, telefono, email);
+        formLayout.add(nombre, username, dni, telefono, email);
 
         editorDiv.add(formLayout);
         createButtonLayout(editorLayoutDiv);
@@ -161,7 +182,8 @@ public class UsuariosView extends Div implements BeforeEnterObserver {
         buttonLayout.setClassName("button-layout");
         cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        buttonLayout.add(save, cancel);
+        delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
+        buttonLayout.add(save, delete, cancel);
         editorLayoutDiv.add(buttonLayout);
     }
 
@@ -169,13 +191,32 @@ public class UsuariosView extends Div implements BeforeEnterObserver {
         Div wrapper = new Div();
         wrapper.setClassName("grid-wrapper");
         splitLayout.addToPrimary(wrapper);
-        wrapper.add(grid);
+        wrapper.add(getToolbar(),grid);
     }
+    
+	private Component getToolbar() {
+		// TODO Auto-generated method stub
+		filterText.setWidth("500px");
+		filterText.setPlaceholder("Filtra por cualquier dato");
+		filterText.setClearButtonVisible(true);
+		filterText.setValueChangeMode(ValueChangeMode.LAZY);
+		filterText.addValueChangeListener(e -> updateList());
+		
+		
+		HorizontalLayout toolbar = new HorizontalLayout(filterText);
+		toolbar.addClassName("toolbar");
+		return toolbar;
+	}
 
     private void refreshGrid() {
         grid.select(null);
         grid.getDataProvider().refreshAll();
     }
+    
+	private void updateList() {
+		// TODO Auto-generated method stub
+		grid.setItems(usuarioService.findAllUsuarios(filterText.getValue()));
+	}
 
     private void clearForm() {
         populateForm(null);
