@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -34,9 +35,9 @@ public class Usuario extends AbstractEntity {
     private String email;
     @NotNull
     private String hashedPassword;
-    @Enumerated(EnumType.STRING)
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<Role> roles;
+    @NotNull
+    private Role rol;
+    
 
     public String getNombre() {
         return nombre;
@@ -80,10 +81,11 @@ public class Usuario extends AbstractEntity {
     public void setHashedPassword(String hashedPassword) {
         this.hashedPassword = hashedPassword;
     }
-    public Set<Role> getRoles() {
-        return roles;
+    
+    public Role getRole() {
+    	return rol;
     }
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+    public void setRole(Role rol) {
+    	this.rol = rol;
     }
 }

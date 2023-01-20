@@ -1,6 +1,8 @@
 package com.example.application.data.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -8,8 +10,10 @@ import javax.validation.constraints.NotNull;
 @Table(name = "incidencia")
 public class Incidencia extends AbstractEntity {
 	
-	@NotNull
-	private String autor;
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private User autor;
+	
 	@NotNull
     private String motivo;
 	@NotNull
@@ -41,11 +45,11 @@ public class Incidencia extends AbstractEntity {
     	this.descripcion = descripcion;
     }
     
-    public String getAutor() {
+    public User getAutor() {
     	return autor;
     }
     
-    public void setAutor (String autor) {
+    public void setAutor (User autor) {
     	this.autor = autor;
     }
 

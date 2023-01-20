@@ -7,13 +7,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.example.application.data.entity.Incidencia;
+import com.example.application.data.entity.User;
 import com.example.application.data.service.IncidenciaService;
+import com.example.application.data.service.UserService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H3;
@@ -31,12 +33,12 @@ import com.vaadin.flow.router.Route;
 @RolesAllowed("USER")
 public class IncidenciaView extends Div{
 
-	private TextField subject = new TextField("Motivo");
-	private ComboBox<String> type = new ComboBox<>("Tipo de consulta");
-	private TextArea description = new TextArea("Describanos su problema:");
+	private TextField motivo = new TextField("Motivo");
+	private Checkbox incidencia = new Checkbox("Incidencia", false);
+	private TextArea descripcion = new TextArea("Describanos su problema:");
 	private int charLimit = 1000;
 	
-	private final IncidenciaService service;
+	protected final IncidenciaService service;
 	private Incidencia i = new Incidencia();
 	private Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 	String name = authentication.getName();
@@ -45,7 +47,7 @@ public class IncidenciaView extends Div{
 	private Button submit = new Button("Enviar");
 	
 	@Autowired
-	public IncidenciaView(IncidenciaService service) {
+	public IncidenciaView(IncidenciaService service, UserService userService) {
 		this.service = service;
 		addClassName("incidencia-view");
 		
@@ -55,27 +57,25 @@ public class IncidenciaView extends Div{
 		
 		binder = new BeanValidationBinder<>(Incidencia.class);
 		
-		description.addValueChangeListener(e -> {
+		binder.bindInstanceFields(this);
+		
+		descripcion.addValueChangeListener(e -> {
 			e.getSource().setHelperText(e.getValue().length() + "/" + charLimit);
 		});
 		
 		submit.addClickListener(q -> {
-			i.setAutor(authentication.getName());
-			i.setMotivo(subject.getValue());
-			if(type.getValue() == "Incidencia")
-				i.setIncidencia(true);
-			else
-				i.setIncidencia(false);
-			i.setDescripcion(description.getValue());
-			service.update(i);
 			try {
 				binder.writeBean(this.i);
+				this.i.setAutor(userService.getCurrentUser());
+				System.out.println(this.i.getAutor().getName());
+				
 				service.update(this.i);
+				
 				clearForm();
 				Notification.show("Su mensaje ha sido enviado correctamente.");
 				UI.getCurrent().navigate(IncidenciaView.class);
 			} catch (ValidationException e1) {
-				Notification.show("Ha ocurrido un error al enviar la incidencia, intentelo de nuevo más tarde.");
+				Notification.show("Ha ocurrido un error al enviar la incidencia, inténtelo de nuevo más tarde.");
 			}
 		});
 	}
@@ -86,21 +86,19 @@ public class IncidenciaView extends Div{
 	
 	private Component createFormLayout() {
 		FormLayout formLayout = new FormLayout();
-		formLayout.add(subject, type, description);
-		formLayout.setColspan(description, 2);
+		formLayout.add(motivo, incidencia, descripcion);
+		formLayout.setColspan(descripcion, 2);
 		return formLayout;
 	}
 	
 	private Component createButtonLayout() {
 		HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.addClassName("button-layout");
-        subject.setPlaceholder("Introduzca un motivo");
-        subject.setRequired(true);
-        subject.setErrorMessage("Por favor, introduzca un motivo.");
-        type.setPlaceholder("Seleccione un tipo");
-        type.setItems("Consulta", "Incidencia");
-        description.setWidthFull();
-        description.setRequired(true);
+        motivo.setPlaceholder("Introduzca un motivo");
+        motivo.setRequired(true);
+        motivo.setErrorMessage("Por favor, introduzca un motivo.");
+        descripcion.setWidthFull();
+        descripcion.setRequired(true);
         submit.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         buttonLayout.add(submit);
         return buttonLayout;

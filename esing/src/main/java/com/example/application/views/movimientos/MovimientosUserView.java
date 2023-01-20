@@ -28,7 +28,7 @@ import org.springframework.data.domain.PageRequest;
 
 @PageTitle("Mis Movimientos")
 @Route(value = "movimientosUser", layout = MainLayout.class)
-@RolesAllowed("ADMIN")
+@RolesAllowed("USER")
 public class MovimientosUserView extends Div implements BeforeEnterObserver {
 
 	private final String MOVIMIENTO_ID = "movimientoID";

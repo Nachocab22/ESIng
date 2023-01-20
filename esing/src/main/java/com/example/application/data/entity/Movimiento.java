@@ -1,39 +1,58 @@
 package com.example.application.data.entity;
 
 import java.time.LocalDate;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Entity(name= "movimiento")
 @Table(name= "movimiento")
 public class Movimiento extends AbstractEntity {
 	
-    private String cuenta;
-    private String tarjeta;
-    private int retenido;
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name = "cuenta_id")
+    private Cuenta cuenta;
+	
+	@ManyToOne
+	@Column(nullable = true)
+	@JoinColumn(name = "tarjeta_id")
+    private Tarjeta tarjeta;
+	
+	@NotNull
+    private boolean retenido;
+	
     private String concepto;
-    private double cantidad;
-    private LocalDate fecha_op;
-    private int tipo;
     
-    public String getCuenta() {
+    @NotNull
+    private double cantidad;
+    
+    @NotNull
+    private LocalDate fecha_op;
+        
+    public Cuenta getCuenta() {
         return cuenta;
     }
-    public void setCuenta(String cuenta) {
+    public void setCuenta(Cuenta cuenta) {
         this.cuenta = cuenta;
     }
     
-    public String getTarjeta() {
+    
+    public Tarjeta getTarjeta() {
         return tarjeta;
     }
-    public void setTarjeta(String tarjeta) {
+    public void setTarjeta(Tarjeta tarjeta) {
         this.tarjeta = tarjeta;
     }
     
-    public int getRetenido() {
+    public boolean getRetenido() {
         return retenido;
     }
-    public void setRetenido(int retenido) {
+    public void setRetenido(boolean retenido) {
     	this.retenido = retenido;
     }
     
@@ -56,12 +75,5 @@ public class Movimiento extends AbstractEntity {
     }
     public void setFecha_op(LocalDate fecha_op) {
         this.fecha_op = fecha_op;
-    }
-    
-    public int getTipo() {
-        return tipo;
-    }
-    public void setTipo(int tipo) {
-        this.tipo = tipo;
     }
 }

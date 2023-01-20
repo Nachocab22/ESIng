@@ -1,5 +1,7 @@
 package com.example.application.views.userpage;
 
+import javax.annotation.security.RolesAllowed;
+
 import com.example.application.data.service.UserService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.HasComponents;
@@ -15,7 +17,7 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 
 @PageTitle("ESIng")
 @Route(value = "user-page", layout = MainLayout.class)
-@AnonymousAllowed
+@RolesAllowed("USER")
 public class UserPageView extends Main implements HasComponents, HasStyle {
 
     private OrderedList dataContainer;

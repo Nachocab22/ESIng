@@ -1,7 +1,10 @@
 package com.example.application.security;
 
+import com.example.application.data.Role;
 import com.example.application.data.entity.User;
 import com.example.application.data.service.UserRepository;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +37,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     private static List<GrantedAuthority> getAuthorities(User user) {
-        return user.getRoles().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+    	List<Role> roleList = Collections.singletonList(user.getRol());
+        return roleList.stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                 .collect(Collectors.toList());
 
     }

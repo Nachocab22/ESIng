@@ -23,6 +23,7 @@ public class IncidenciaService {
     }
 
     public Incidencia update(Incidencia entity) {
+    	System.out.println(entity.getAutor().getName());
         return repository.save(entity);
     }
 

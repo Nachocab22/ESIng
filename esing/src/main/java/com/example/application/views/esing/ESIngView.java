@@ -46,7 +46,7 @@ public class ESIngView extends Main implements HasComponents, HasStyle {
         container.addClassNames("items-center", "justify-between");
 
         VerticalLayout headerContainer = new VerticalLayout();
-        H2 header = new H2("ESIng");
+        H2 header = new H2("Anuncios");
         header.addClassNames("mb-0", "mt-xl", "text-3xl");
         Paragraph description = new Paragraph("Imagenes de stock");
         description.addClassNames("mb-xl", "mt-0", "text-secondary");
