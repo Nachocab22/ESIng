@@ -1,9 +1,11 @@
 package com.example.application.data.entity;
 
 import java.util.UUID;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+
 import org.hibernate.annotations.Type;
 
 @MappedSuperclass

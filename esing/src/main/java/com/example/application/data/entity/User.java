@@ -45,19 +45,6 @@ public class User extends AbstractEntity {
     private String hashedPassword;
     
     private Role rol;
-
-    public String getSurname() {
-    	return surname;
-    }
-    public void setSurname(String surname) {
-    	this.surname = surname;
-    }
-    public String getDni() {
-    	return dni;
-    }
-    public void setDni(String dni) {
-    	this.dni = dni;
-    }
     
     @Lob
     @Column(length = 1000000)
@@ -72,6 +59,18 @@ public class User extends AbstractEntity {
     @OneToMany(mappedBy = "autor")
     private Set<Incidencia> incidencias;
 
+    public String getSurname() {
+    	return surname;
+    }
+    public void setSurname(String surname) {
+    	this.surname = surname;
+    }
+    public String getDni() {
+    	return dni;
+    }
+    public void setDni(String dni) {
+    	this.dni = dni;
+    }
     public String getUsername() {
         return username;
     }
@@ -129,5 +128,9 @@ public class User extends AbstractEntity {
     }
     public void setdni(String dni) {
         this.dni = dni;
+    }
+    
+    public String getFullName() {
+    	return name + " " + surname;
     }
 }

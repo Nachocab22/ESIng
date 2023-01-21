@@ -1,7 +1,15 @@
 package com.example.application.views.introducetarjetadecredito;
 
+import java.util.List;
+
 import javax.annotation.security.RolesAllowed;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import com.example.application.data.entity.Cuenta;
+import com.example.application.data.entity.User;
+import com.example.application.data.service.TarjetaService;
+import com.example.application.data.service.UserService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -19,22 +27,26 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 @PageTitle("Introduce tarjeta de credito")
-@Route(value = "credit-card-form", layout = MainLayout.class)
-@RolesAllowed("USER")
+@Route(value = "admin-tarjeta", layout = MainLayout.class)
+@RolesAllowed("ADMIN")
 public class IntroducetarjetadecreditoView extends Div {
 
-    private TextField cardNumber = new TextField("Número de la tarjeta");
-    private TextField cardholderName = new TextField("Nombre del propietario");
-    private Select<Integer> mes = new Select<>();
-    private Select<Integer> año = new Select<>();
-    private ExpirationDateField expiration = new ExpirationDateField("Fecha de caducidad", mes, año);
-    private PasswordField csc = new PasswordField("CSC");
+	private final UserService userService;
+	private Select<Integer> mes = new Select<>();
+	private Select<Integer> año = new Select<>();
+	
+    private TextField numero = new TextField("Número de la tarjeta");
+    private Select<User> titular = new Select<>();
+    private Select<Cuenta> cuenta = new Select<>();
+    private ExpirationDateField caducidad = new ExpirationDateField("Fecha de caducidad", mes, año);
+    private PasswordField cvv = new PasswordField("CVV");
 
     private Button cancel = new Button("Cancelar");
     private Button submit = new Button("Enviar");
 
-    public IntroducetarjetadecreditoView() {
-        addClassName("introducetarjetadecredito-view");
+    public IntroducetarjetadecreditoView(UserService userService, TarjetaService tarjetaService) {
+        addClassName("tarjeta-view");
+        this.userService = userService;
 
         add(createTitle());
         add(createFormLayout());
@@ -54,18 +66,28 @@ public class IntroducetarjetadecreditoView extends Div {
 
     private Component createFormLayout() {
         FormLayout formLayout = new FormLayout();
-        formLayout.add(cardNumber, cardholderName, expiration, csc);
+        formLayout.add(numero, titular, cuenta, caducidad, cvv);
         return formLayout;
     }
 
     private Component createButtonLayout() {
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.addClassName("button-layout");
-        cardNumber.setPlaceholder("1234 5678 9123 4567");
-        cardNumber.setPattern("[\\d ]*");
-        cardNumber.setPreventInvalidInput(true);
-        cardNumber.setRequired(true);
-        cardNumber.setErrorMessage("Please enter a valid credit card number");
+        numero.setPlaceholder("1234 5678 9123 4567");
+        numero.setPattern("[\\d ]*");
+        numero.setRequired(true);
+        numero.setErrorMessage("Por favor introduzca un numero de tarjeta valido");
+        titular.setLabel("Titular");
+        titular.setPlaceholder("Seleccione el titular");
+        titular.setItemLabelGenerator(User::getFullName);
+        
+        final List<User> users = userService.findAllUsers(SecurityContextHolder.getContext().getAuthentication().getName());
+        
+        titular.setItems(users);
+        cuenta.setLabel("Cuenta");
+        cuenta.setPlaceholder("Seleccione la cuenta");
+        
+        
         mes.setPlaceholder("Mes");
         mes.setItems(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
         año.setPlaceholder("Año");

@@ -18,8 +18,7 @@ public class Movimiento extends AbstractEntity {
 	@JoinColumn(name = "cuenta_id")
     private Cuenta cuenta;
 	
-	@ManyToOne
-	@Column(nullable = true)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "tarjeta_id")
     private Tarjeta tarjeta;
 	

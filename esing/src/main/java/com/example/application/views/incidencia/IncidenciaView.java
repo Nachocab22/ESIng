@@ -7,7 +7,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.example.application.data.entity.Incidencia;
-import com.example.application.data.entity.User;
 import com.example.application.data.service.IncidenciaService;
 import com.example.application.data.service.UserService;
 import com.example.application.views.MainLayout;
@@ -66,9 +65,7 @@ public class IncidenciaView extends Div{
 		submit.addClickListener(q -> {
 			try {
 				binder.writeBean(this.i);
-				this.i.setAutor(userService.getCurrentUser());
-				System.out.println(this.i.getAutor().getName());
-				
+				this.i.setAutor(userService.getCurrentUser());				
 				service.update(this.i);
 				
 				clearForm();
@@ -81,7 +78,7 @@ public class IncidenciaView extends Div{
 	}
 
 	private Component createTitle() {
-		return new H3("   Abrir nuevo comunicado");
+		return new H3("Abrir nuevo comunicado");
 	}
 	
 	private Component createFormLayout() {
