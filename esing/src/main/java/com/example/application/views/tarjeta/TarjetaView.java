@@ -1,5 +1,17 @@
-package com.example.application.views.introducetarjetadecredito;
+package com.example.application.views.tarjeta;
 
+import java.util.List;
+
+import javax.annotation.security.RolesAllowed;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import com.example.application.data.entity.Cuenta;
+import com.example.application.data.entity.Tarjeta;
+import com.example.application.data.entity.User;
+import com.example.application.data.service.TarjetaService;
+import com.example.application.data.service.UserService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -13,37 +25,56 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.BeanValidationBinder;
+import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import javax.annotation.security.RolesAllowed;
 
 @PageTitle("Introduce tarjeta de credito")
-@Route(value = "credit-card-form", layout = MainLayout.class)
-@RolesAllowed("USER")
-public class IntroducetarjetadecreditoView extends Div {
+@Route(value = "admin-tarjeta", layout = MainLayout.class)
+@RolesAllowed("ADMIN")
+public class TarjetaView extends Div {
 
-    private TextField cardNumber = new TextField("Número de la tarjeta");
-    private TextField cardholderName = new TextField("Nombre del propietario");
-    private Select<Integer> mes = new Select<>();
-    private Select<Integer> año = new Select<>();
-    private ExpirationDateField expiration = new ExpirationDateField("Fecha de caducidad", mes, año);
-    private PasswordField csc = new PasswordField("CSC");
+	private Tarjeta tarjeta;
+	private final UserService userService;
+	private Select<Integer> mes = new Select<>();
+	private Select<Integer> año = new Select<>();
+	
+    private TextField numero = new TextField("Número de la tarjeta");
+    private Select<User> titular = new Select<>();
+    private Select<Cuenta> cuenta = new Select<>();
+    private ExpirationDateField caducidad = new ExpirationDateField("Fecha de caducidad", mes, año);
+    private PasswordField cvv = new PasswordField("CVV");
+    
+	private final BeanValidationBinder<Tarjeta> binder;
 
     private Button cancel = new Button("Cancelar");
     private Button submit = new Button("Enviar");
-
-    public IntroducetarjetadecreditoView() {
-        addClassName("introducetarjetadecredito-view");
+    
+    @Autowired
+    public TarjetaView(TarjetaService tarjetaService, UserService userService) {
+        addClassName("tarjeta-view");
+        this.userService = userService;
 
         add(createTitle());
         add(createFormLayout());
         add(createButtonLayout());
+        
+		binder = new BeanValidationBinder<>(Tarjeta.class);
+		
+		binder.bindInstanceFields(this);
 
         cancel.addClickListener(e -> {
             Notification.show("Not implemented");
         });
         submit.addClickListener(e -> {
-            Notification.show("Not implemented");
+        	try {
+        		binder.writeBean(this.tarjeta);
+    			tarjetaService.update(this.tarjeta);
+                Notification.show("Not implemented");
+        	} catch(ValidationException e1) {
+        		Notification.show("Ha ocurrido un error al asignar la tarjeta, inténtelo de nuevo más tarde.");
+        	}
         });
     }
 
@@ -53,18 +84,28 @@ public class IntroducetarjetadecreditoView extends Div {
 
     private Component createFormLayout() {
         FormLayout formLayout = new FormLayout();
-        formLayout.add(cardNumber, cardholderName, expiration, csc);
+        formLayout.add(numero, titular, cuenta, caducidad, cvv);
         return formLayout;
     }
 
     private Component createButtonLayout() {
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.addClassName("button-layout");
-        cardNumber.setPlaceholder("1234 5678 9123 4567");
-        cardNumber.setPattern("[\\d ]*");
-        cardNumber.setPreventInvalidInput(true);
-        cardNumber.setRequired(true);
-        cardNumber.setErrorMessage("Please enter a valid credit card number");
+        numero.setPlaceholder("1234 5678 9123 4567");
+        numero.setPattern("[\\d ]*");
+        numero.setRequired(true);
+        numero.setErrorMessage("Por favor introduzca un numero de tarjeta valido");
+        titular.setLabel("Titular");
+        titular.setPlaceholder("Seleccione el titular");
+        titular.setItemLabelGenerator(User::getFullName);
+        
+        final List<User> users = userService.findAllUsers(SecurityContextHolder.getContext().getAuthentication().getName());
+        
+        titular.setItems(users);
+        cuenta.setLabel("Cuenta");
+        cuenta.setPlaceholder("Seleccione la cuenta");
+        
+        
         mes.setPlaceholder("Mes");
         mes.setItems(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
         año.setPlaceholder("Año");

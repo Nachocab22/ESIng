@@ -1,6 +1,9 @@
 //Commit 9 Jan
 package com.example.application.views;
 
+import java.io.ByteArrayInputStream;
+import java.util.Optional;
+
 import com.example.application.components.appnav.AppNav;
 import com.example.application.components.appnav.AppNavItem;
 import com.example.application.data.entity.User;
@@ -8,11 +11,9 @@ import com.example.application.security.AuthenticatedUser;
 import com.example.application.views.esing.ESIngView;
 import com.example.application.views.incidencia.IncidenciaAdminView;
 import com.example.application.views.incidencia.IncidenciaView;
-import com.example.application.views.introducetarjetadecredito.IntroducetarjetadecreditoView;
-import com.example.application.views.pago.PagoView;
-import com.example.application.views.userpage.UserPageView;
 import com.example.application.views.movimientos.MovimientosView;
-import com.example.application.views.registro.RegistroView;
+import com.example.application.views.tarjeta.TarjetaView;
+import com.example.application.views.userpage.UserPageView;
 import com.example.application.views.usuarios.UsuariosView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -31,8 +32,6 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 import com.vaadin.flow.theme.lumo.LumoUtility;
-import java.io.ByteArrayInputStream;
-import java.util.Optional;
 
 /**
  * The main view is a top-level placeholder for other views.
@@ -82,19 +81,14 @@ public class MainLayout extends AppLayout {
             nav.addItem(new AppNavItem("ESIng", ESIngView.class, "la la-scroll"));
 
         }
-
-        if (accessChecker.hasAccess(RegistroView.class)) {
-            nav.addItem(new AppNavItem("Registro", RegistroView.class, "la la-user"));
-
-        }
         
         if (accessChecker.hasAccess(UserPageView.class)) {
             nav.addItem(new AppNavItem("Dashboard", UserPageView.class, "la la-user"));
             
         }
         
-        if (accessChecker.hasAccess(IntroducetarjetadecreditoView.class)) {
-            nav.addItem(new AppNavItem("Introduce tarjeta de credito", IntroducetarjetadecreditoView.class, "la la-credit-card"));
+        if (accessChecker.hasAccess(TarjetaView.class)) {
+            nav.addItem(new AppNavItem("Introduce tarjeta de credito", TarjetaView.class, "la la-credit-card"));
             
         }
            
@@ -102,10 +96,6 @@ public class MainLayout extends AppLayout {
         	nav.addItem(new AppNavItem("Movimientos", MovimientosView.class, "la la-colums"));
         }
 
-        if (accessChecker.hasAccess(PagoView.class)) {
-            nav.addItem(new AppNavItem("Pago", PagoView.class, "la la-credit-card"));
-
-        }
         if (accessChecker.hasAccess(UsuariosView.class)) {
             nav.addItem(new AppNavItem("Usuarios", UsuariosView.class, "la la-columns"));
 
@@ -149,14 +139,15 @@ public class MainLayout extends AppLayout {
             div.getElement().getStyle().set("align-items", "center");
             div.getElement().getStyle().set("gap", "var(--lumo-space-s)");
             userName.add(div);
-            userName.getSubMenu().addItem("Sign out", e -> {
+            userName.getSubMenu().addItem("Cerrar sesión", e -> {
                 authenticatedUser.logout();
             });
 
             layout.add(userMenu);
         } else {
-            Anchor loginLink = new Anchor("login", "Sign in");
-            layout.add(loginLink);
+        	Anchor registerLink = new Anchor("sign_up", "Registrarse");
+            Anchor loginLink = new Anchor("login", "Iniciar sesión");
+            layout.add(loginLink, registerLink);
         }
 
         return layout;

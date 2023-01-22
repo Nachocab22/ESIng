@@ -32,9 +32,6 @@ public class Movimiento extends AbstractEntity {
     
     @NotNull
     private LocalDate fecha_op;
-    
-    @NotNull
-    private String tipo;
         
     public Cuenta getCuenta() {
         return cuenta;
@@ -77,11 +74,5 @@ public class Movimiento extends AbstractEntity {
     }
     public void setFecha_op(LocalDate fecha_op) {
         this.fecha_op = fecha_op;
-    }  
-    public String getTipo() {
-        return tipo;
-    }
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
     }
 }

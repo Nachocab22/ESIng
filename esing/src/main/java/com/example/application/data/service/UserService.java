@@ -1,14 +1,16 @@
 package com.example.application.data.service;
 
-import com.example.application.data.entity.User;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import com.example.application.data.entity.User;
 
 @Service
 public class UserService {
@@ -18,6 +20,14 @@ public class UserService {
     @Autowired
     public UserService(UserRepository repository) {
         this.repository = repository;
+    }
+    
+    public User findUserByUsername(String username) {
+    	return repository.findByUsername(username);
+    }
+    
+    public User getCurrentUser() {
+    	return findUserByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
     public Optional<User> get(UUID id) {
@@ -64,4 +74,5 @@ public class UserService {
     	
     	repository.save(user);
     }
+    
 }

@@ -19,6 +19,5 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     		"or lower(u.dni) like lower(concat('%', :searchTerm, '%')) " +
     		"or lower(u.email) like lower(concat('%', :searchTerm, '%')) " +
     		"or lower(u.address) like lower(concat('%', :searchTerm, '%')) ")
-    	List<User> search(@Param("searchTerm") String searchTerm);
-    	
+    	List<User> search(@Param("searchTerm") String searchTerm);    	
 }
