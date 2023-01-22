@@ -18,16 +18,6 @@ public class UserPageViewCard extends ListItem{
 
         Span table = new Span();
         table.addClassNames("text-s", "text-secondary");
-        if(!cuentas.isEmpty()) {
-            Grid<Cuenta> gridAccounts = new Grid<>(Cuenta.class, false);
-            //ADD CUENTAs TO GRID
-            table.add(new Grid<Cuenta>());
-        }
-        if(!tarjetas.isEmpty()) {
-            Grid<Tarjeta> gridAccounts = new Grid<>(Tarjeta.class, false);
-            //ADD TARJETAs TO GRID
-            table.add(new Grid<Tarjeta>());
-        }
 
         add(header, table);
 

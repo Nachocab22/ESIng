@@ -1,7 +1,16 @@
 package com.example.application.views.usuarios;
 
+import java.util.Optional;
+import java.util.UUID;
+
+import javax.annotation.security.RolesAllowed;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+
+import com.example.application.data.entity.User;
 import com.example.application.data.entity.Usuario;
-import com.example.application.data.service.UsuarioService;
+import com.example.application.data.service.UserService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
@@ -14,7 +23,6 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
-import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.ValidationException;
@@ -24,11 +32,6 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
-import java.util.Optional;
-import java.util.UUID;
-import javax.annotation.security.RolesAllowed;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 
 @PageTitle("Usuarios")
 @Route(value = "usuarios/:usuarioID?/:action?(edit)", layout = MainLayout.class)
@@ -38,29 +41,30 @@ public class UsuariosView extends Div implements BeforeEnterObserver {
     private final String USUARIO_ID = "usuarioID";
     private final String USUARIO_EDIT_ROUTE_TEMPLATE = "usuarios/%s/edit";
 
-    private final Grid<Usuario> grid = new Grid<>(Usuario.class, false);
+    private final Grid<User> grid = new Grid<>(User.class, false);
     
     private TextField filterText = new TextField();
     
-    private TextField nombre;
+    private TextField name;
+    private TextField surname;
     private TextField username;
     private TextField dni;
-    private TextField telefono;
+    private TextField phone;
     private TextField email;
 
     private final Button cancel = new Button("Cancelar");
     private final Button save = new Button("Guardar");
     private final Button delete = new Button("Borrar");
     
-    private final BeanValidationBinder<Usuario> binder;
+    private final BeanValidationBinder<User> binder;
 
-    private Usuario usuario;
+    private User user;
 
-    private final UsuarioService usuarioService;
+    private final UserService userService;
 
     @Autowired
-    public UsuariosView(UsuarioService usuarioService) {
-        this.usuarioService = usuarioService;
+    public UsuariosView(UserService userService) {
+        this.userService = userService;
         addClassNames("usuarios-view");
 
         // Create UI
@@ -72,12 +76,13 @@ public class UsuariosView extends Div implements BeforeEnterObserver {
         add(splitLayout);
 
         // Configure Grid
-        grid.addColumn("nombre").setAutoWidth(true);
+        grid.addColumn("name").setAutoWidth(true);
+        grid.addColumn("surname").setAutoWidth(true);
         grid.addColumn("username").setAutoWidth(true);
         grid.addColumn("dni").setAutoWidth(true);
-        grid.addColumn("telefono").setAutoWidth(true);
+        grid.addColumn("phone").setAutoWidth(true);
         grid.addColumn("email").setAutoWidth(true);
-        grid.setItems(query -> usuarioService.list(
+        grid.setItems(query -> userService.list(
                 PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
                 .stream());
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
@@ -93,7 +98,7 @@ public class UsuariosView extends Div implements BeforeEnterObserver {
         });
 
         // Configure Form
-        binder = new BeanValidationBinder<>(Usuario.class);
+        binder = new BeanValidationBinder<>(User.class);
 
         // Bind fields. This is where you'd define e.g. validation rules
 
@@ -106,9 +111,9 @@ public class UsuariosView extends Div implements BeforeEnterObserver {
 
         save.addClickListener(e -> {
             try {
-                if (this.usuario != null) {
-                	binder.writeBean(this.usuario);
-                    usuarioService.update(this.usuario);
+                if (this.user != null) {
+                	binder.writeBean(this.user);
+                    userService.update(this.user);
                     Notification.show("Detalles de Usuario guardados");
                 }else {
                 	Notification.show("No se pueden generar usuario desde esta pagina, dirijase a registro.");
@@ -122,9 +127,9 @@ public class UsuariosView extends Div implements BeforeEnterObserver {
         });
         delete.addClickListener(e ->{
 	       	try {
-	       		if(this.usuario != null) {
-	       			binder.writeBean(this.usuario);
-	       			usuarioService.delete(this.usuario.getId());
+	       		if(this.user != null) {
+	       			binder.writeBean(this.user);
+	       			userService.delete(this.user.getId());
 	       			Notification.show("Usuario Borrado");
 	       		}
 	       		clearForm();
@@ -141,7 +146,7 @@ public class UsuariosView extends Div implements BeforeEnterObserver {
     public void beforeEnter(BeforeEnterEvent event) {
         Optional<UUID> usuarioId = event.getRouteParameters().get(USUARIO_ID).map(UUID::fromString);
         if (usuarioId.isPresent()) {
-            Optional<Usuario> usuarioFromBackend = usuarioService.get(usuarioId.get());
+            Optional<User> usuarioFromBackend = userService.get(usuarioId.get());
             if (usuarioFromBackend.isPresent()) {
                 populateForm(usuarioFromBackend.get());
             } else {
@@ -164,12 +169,13 @@ public class UsuariosView extends Div implements BeforeEnterObserver {
         editorLayoutDiv.add(editorDiv);
 
         FormLayout formLayout = new FormLayout();
-        nombre = new TextField("Nombre");
+        name = new TextField("Nombre");
+        surname = new TextField("Apellidos");
         username = new TextField("Username");
         dni = new TextField("Dni");
-        telefono = new TextField("Telefono");
+        phone = new TextField("Telefono");
         email = new TextField("Email");
-        formLayout.add(nombre, username, dni, telefono, email);
+        formLayout.add(name, surname, username, dni, phone, email);
 
         editorDiv.add(formLayout);
         createButtonLayout(editorLayoutDiv);
@@ -215,16 +221,16 @@ public class UsuariosView extends Div implements BeforeEnterObserver {
     
 	private void updateList() {
 		// TODO Auto-generated method stub
-		grid.setItems(usuarioService.findAllUsuarios(filterText.getValue()));
+		grid.setItems(userService.findAllUsers(filterText.getValue()));
 	}
 
     private void clearForm() {
         populateForm(null);
     }
 
-    private void populateForm(Usuario value) {
-        this.usuario = value;
-        binder.readBean(this.usuario);
+    private void populateForm(User value) {
+        this.user = value;
+        binder.readBean(this.user);
 
     }
 }

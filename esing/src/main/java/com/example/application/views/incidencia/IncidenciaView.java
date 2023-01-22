@@ -83,7 +83,7 @@ public class IncidenciaView extends Div{
 	
 	private Component createFormLayout() {
 		FormLayout formLayout = new FormLayout();
-		formLayout.add(motivo, incidencia, descripcion);
+		formLayout.add(motivo, descripcion, incidencia);
 		formLayout.setColspan(descripcion, 2);
 		return formLayout;
 	}

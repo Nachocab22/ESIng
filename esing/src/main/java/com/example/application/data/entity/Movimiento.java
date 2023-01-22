@@ -25,7 +25,10 @@ public class Movimiento extends AbstractEntity {
 	@NotNull
     private boolean retenido;
 	
-    private String concepto;
+	private String concepto;
+    
+    @NotNull
+    private String tipo;
     
     @NotNull
     private double cantidad;
@@ -39,7 +42,6 @@ public class Movimiento extends AbstractEntity {
     public void setCuenta(Cuenta cuenta) {
         this.cuenta = cuenta;
     }
-    
     
     public Tarjeta getTarjeta() {
         return tarjeta;
@@ -68,7 +70,12 @@ public class Movimiento extends AbstractEntity {
     public void setCantidad(double cantidad) {
         this.cantidad = cantidad;
     }
-    
+    public String getTipo() {
+		return tipo;
+	}
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
     public LocalDate getFecha_op() {
         return fecha_op;
     }

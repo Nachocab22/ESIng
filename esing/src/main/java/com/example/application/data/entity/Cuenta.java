@@ -20,6 +20,9 @@ public class Cuenta extends AbstractEntity{
     private String mote;
     
     @NotNull
+    private double saldo;
+    
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User titular;
@@ -57,5 +60,13 @@ public class Cuenta extends AbstractEntity{
 
 	public void setTarjetas(Set<Tarjeta> tarjetas) {
 		this.tarjetas = tarjetas;
+	}
+	
+	public double getSaldo() {
+		return saldo;
+	}
+
+	public void setSaldo(double saldo) {
+		this.saldo = saldo;
 	}
 }

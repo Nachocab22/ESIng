@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.application.data.entity.Cuenta;
+import com.example.application.data.entity.Movimiento;
 
 @Service
 public class CuentaService {
@@ -43,6 +44,13 @@ public class CuentaService {
     		return repository.search(stringFilter);
     	}
     }
+    
+    public void actualizarSaldo(Movimiento movimiento, Cuenta cuenta) {
+		if(movimiento.getTipo() == "Gasto")
+			cuenta.setSaldo(cuenta.getSaldo() - movimiento.getCantidad());
+		else
+			cuenta.setSaldo(cuenta.getSaldo() + movimiento.getCantidad());
+	}
 
     public int count() {
         return (int) repository.count();

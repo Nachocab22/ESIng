@@ -1,5 +1,14 @@
 package com.example.application.views.movimientos;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import javax.annotation.security.RolesAllowed;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+
 import com.example.application.data.entity.Cuenta;
 import com.example.application.data.entity.Movimiento;
 import com.example.application.data.entity.Tarjeta;
@@ -33,13 +42,6 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import javax.annotation.security.RolesAllowed;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-
 @PageTitle("Movimientos")
 @Route(value = "movimientos/:movimientoID?/:action?(edit)", layout = MainLayout.class)
 @RolesAllowed("ADMIN")
@@ -50,6 +52,8 @@ public class MovimientosView extends Div implements BeforeEnterObserver {
 
     private final Grid<Movimiento> grid = new Grid<>(Movimiento.class, false);
 
+    private Select<User> titular = new Select<>();
+    
     private Select<Cuenta> cuenta = new Select<>();
     private Select<Tarjeta> tarjeta = new Select<>();
     private Checkbox retenido;
@@ -62,21 +66,23 @@ public class MovimientosView extends Div implements BeforeEnterObserver {
     private final Button guardar = new Button("Guardar");
     private final Button eliminar = new Button("Eliminar");
 
-    private final BeanValidationBinder<Movimiento> binder;
+    private final BeanValidationBinder<Movimiento> binderMovimiento;
+    private final BeanValidationBinder<Cuenta> binderCuenta;
 
     private Movimiento movimiento;
+    private Cuenta cuentaSave;
 
+    private final UserService userService;
     private final MovimientoService movimientoService;
 	private final CuentaService cuentaService;
-	private final UserService userService;
 	private final TarjetaService tarjetaService;
 
     @Autowired
-    public MovimientosView(MovimientoService movimientoService, CuentaService cuentaService, UserService userService, TarjetaService tarjetaService) {
+    public MovimientosView(MovimientoService movimientoService, CuentaService cuentaService, TarjetaService tarjetaService, UserService userService) {
         this.movimientoService = movimientoService;
         this.cuentaService = cuentaService;
-        this.userService = userService;
         this.tarjetaService = tarjetaService;
+        this.userService = userService;
         addClassNames("movimientos-view");
 
         // Create UI
@@ -88,7 +94,7 @@ public class MovimientosView extends Div implements BeforeEnterObserver {
         add(splitLayout);
 
         // Configure Grid
-        grid.addColumn("cuenta").setAutoWidth(true);
+        grid.addColumn(cuenta -> cuenta.getCuenta().getIban()).setAutoWidth(true);
         grid.addColumn("tarjeta").setAutoWidth(true);
         grid.addColumn("retenido").setAutoWidth(true);
         grid.addColumn("concepto").setAutoWidth(true);
@@ -111,10 +117,11 @@ public class MovimientosView extends Div implements BeforeEnterObserver {
         });
 
         // Configure Form
-        binder = new BeanValidationBinder<>(Movimiento.class);
+        binderMovimiento = new BeanValidationBinder<>(Movimiento.class);
+        binderCuenta = new BeanValidationBinder<>(Cuenta.class);
 
         // Bind fields. This is where you'd define e.g. validation rules
-        binder.bindInstanceFields(this);
+        binderMovimiento.bindInstanceFields(this);
 
         cancelar.addClickListener(e -> {
             clearForm();
@@ -128,8 +135,6 @@ public class MovimientosView extends Div implements BeforeEnterObserver {
                 }
                 if (cuenta.isEmpty()) {
 			        Notification.show("Falta introducir uno o más valores");
-			    } else if (tarjeta.isEmpty()) {
-			        Notification.show("Falta introducir uno o más valores");
 			    } else if (concepto.isEmpty()) {
 			        Notification.show("Falta introducir uno o más valores");
 			    } else if (cantidad.isEmpty()) {
@@ -139,8 +144,12 @@ public class MovimientosView extends Div implements BeforeEnterObserver {
 			    } else if (tipo.isEmpty()) {
 			        Notification.show("Falta introducir uno o más valores");
 			    } else {
-                binder.writeBean(this.movimiento);
+                binderMovimiento.writeBean(this.movimiento);
                 movimientoService.update(this.movimiento);
+                this.cuentaSave = cuenta.getValue();
+                cuentaService.actualizarSaldo(this.movimiento, this.cuentaSave);
+                binderCuenta.writeBean(this.cuentaSave);
+                cuentaService.update(this.cuentaSave);
                 clearForm();
                 refreshGrid();
                 Notification.show("Movimiento guardado.");
@@ -152,7 +161,7 @@ public class MovimientosView extends Div implements BeforeEnterObserver {
         
         eliminar.addClickListener(e -> {
 			try {
-				binder.getBean();
+				binderMovimiento.getBean();
 				movimientoService.delete(this.movimiento.getId());
 
 				clearForm();
@@ -195,14 +204,28 @@ public class MovimientosView extends Div implements BeforeEnterObserver {
 
         FormLayout formLayout = new FormLayout();
         
+        titular.setLabel("Titular");
+        titular.setPlaceholder("Seleccione el titular");
+        titular.setItemLabelGenerator(User::getUsername);
+        
+        final List<User> users = userService.findAllUsers(null);
+        
+        titular.setItems(users);
         cuenta.setLabel("Cuenta");
-		cuenta.setItemLabelGenerator(Cuenta::getMote);
-		final List<Cuenta> cuentas = cuentaService.findAllCuentas(null);
-		cuenta.setItems(cuentas);
-		tarjeta.setLabel("Tarjeta");
-		tarjeta.setItemLabelGenerator(Tarjeta::getNumero);
-		final List<Tarjeta> tarjetas = tarjetaService.findAllTarjetas(null);
-		tarjeta.setItems(tarjetas);
+        tarjeta.setLabel("Tarjeta");
+        titular.addValueChangeListener(event -> {
+        	
+    		cuenta.setItemLabelGenerator(Cuenta::getIban);
+    		final List<Cuenta> cuentas = cuentaService.findAllCuentas(event.getValue().getId().toString());
+    		cuenta.setItems(cuentas);
+    		
+    		tarjeta.setItemLabelGenerator(Tarjeta::getNumero);
+    		final List<Tarjeta> tarjetas = tarjetaService.findAllTarjetas(event.getValue().getId().toString());
+    		tarjeta.setItems(tarjetas);
+        });
+        
+        
+		
         retenido = new Checkbox("Retenido");
         retenido.setLabel("El movimiento está retenido");
         concepto = new TextField("Concepto");
@@ -210,7 +233,7 @@ public class MovimientosView extends Div implements BeforeEnterObserver {
         fecha_op = new DatePicker("Fecha");
         tipo.setPlaceholder("Seleccione un tipo");
         tipo.setItems("Ingreso", "Gasto");
-        formLayout.add(cuenta, tarjeta, concepto, cantidad, fecha_op, tipo, retenido);
+        formLayout.add(titular, cuenta, tarjeta, concepto, cantidad, fecha_op, tipo, retenido);
 
         editorDiv.add(formLayout);
         createButtonLayout(editorLayoutDiv);
@@ -246,7 +269,7 @@ public class MovimientosView extends Div implements BeforeEnterObserver {
 
     private void populateForm(Movimiento value) {
         this.movimiento = value;
-        binder.readBean(this.movimiento);
+        binderMovimiento.readBean(this.movimiento);
 
     }
 }

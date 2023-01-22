@@ -36,7 +36,7 @@ public class IncidenciaAdminView extends Div{
 		add(createTitle());
 		add(createGridLayout());
 		
-		grid.addColumn("autor").setAutoWidth(true);
+		grid.addColumn(autor -> autor.getAutor().getFullName()).setAutoWidth(true);
         grid.addColumn("motivo").setAutoWidth(true);
         grid.addColumn("incidencia").setAutoWidth(true);
         grid.addColumn("descripcion").setAutoWidth(true);

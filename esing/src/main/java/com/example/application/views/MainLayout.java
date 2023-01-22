@@ -8,9 +8,11 @@ import com.example.application.components.appnav.AppNav;
 import com.example.application.components.appnav.AppNavItem;
 import com.example.application.data.entity.User;
 import com.example.application.security.AuthenticatedUser;
+import com.example.application.views.cuenta.CuentaView;
 import com.example.application.views.esing.ESIngView;
 import com.example.application.views.incidencia.IncidenciaAdminView;
 import com.example.application.views.incidencia.IncidenciaView;
+import com.example.application.views.movimientos.MovimientosUserView;
 import com.example.application.views.movimientos.MovimientosView;
 import com.example.application.views.tarjeta.TarjetaView;
 import com.example.application.views.userpage.UserPageView;
@@ -87,26 +89,34 @@ public class MainLayout extends AppLayout {
             
         }
         
-        if (accessChecker.hasAccess(TarjetaView.class)) {
-            nav.addItem(new AppNavItem("Introduce tarjeta de credito", TarjetaView.class, "la la-credit-card"));
-            
-        }
-           
-        if (accessChecker.hasAccess(MovimientosView.class)) {
-        	nav.addItem(new AppNavItem("Movimientos", MovimientosView.class, "la la-colums"));
-        }
-
-        if (accessChecker.hasAccess(UsuariosView.class)) {
-            nav.addItem(new AppNavItem("Usuarios", UsuariosView.class, "la la-columns"));
-
+        if (accessChecker.hasAccess(MovimientosUserView.class)) {
+        	nav.addItem(new AppNavItem("Mis movimientos", MovimientosUserView.class, "la la-telegram"));
         }
         
         if (accessChecker.hasAccess(IncidenciaView.class)) {
-        	nav.addItem(new AppNavItem("Contacte con su gestor", IncidenciaView.class, "la la-incidence"));
+        	nav.addItem(new AppNavItem("Contacte con su gestor", IncidenciaView.class, "la la-phone"));
+        }
+        
+        //Administradores
+        
+        if (accessChecker.hasAccess(UsuariosView.class)) {
+            nav.addItem(new AppNavItem("Gestionar usuarios", UsuariosView.class, "la la-list"));
+        }
+        
+        if (accessChecker.hasAccess(CuentaView.class)) {
+        	nav.addItem(new AppNavItem("Asignar cuenta", CuentaView.class, "la la-piggy-bank"));
+        }
+        
+        if (accessChecker.hasAccess(TarjetaView.class)) {
+            nav.addItem(new AppNavItem("Introduce tarjeta de credito", TarjetaView.class, "la la-credit-card"));
+        }
+           
+        if (accessChecker.hasAccess(MovimientosView.class)) {
+        	nav.addItem(new AppNavItem("Movimientos realizados", MovimientosView.class, "la la-telegram"));
         }
         
         if (accessChecker.hasAccess(IncidenciaAdminView.class)) {
-        	nav.addItem(new AppNavItem("Lista de incidencias" , IncidenciaAdminView.class, "la la-incidence-admin"));
+        	nav.addItem(new AppNavItem("Lista de incidencias" , IncidenciaAdminView.class, "la la-warning"));
         }
         
 
