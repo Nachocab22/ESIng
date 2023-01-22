@@ -5,11 +5,11 @@ import java.util.List;
 import javax.annotation.security.RolesAllowed;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.example.application.data.entity.Cuenta;
 import com.example.application.data.entity.Tarjeta;
 import com.example.application.data.entity.User;
+import com.example.application.data.service.CuentaService;
 import com.example.application.data.service.TarjetaService;
 import com.example.application.data.service.UserService;
 import com.example.application.views.MainLayout;
@@ -35,8 +35,6 @@ import com.vaadin.flow.router.Route;
 @RolesAllowed("ADMIN")
 public class TarjetaView extends Div {
 
-	private Tarjeta tarjeta;
-	private final UserService userService;
 	private Select<Integer> mes = new Select<>();
 	private Select<Integer> año = new Select<>();
 	
@@ -46,14 +44,18 @@ public class TarjetaView extends Div {
     private ExpirationDateField caducidad = new ExpirationDateField("Fecha de caducidad", mes, año);
     private PasswordField cvv = new PasswordField("CVV");
     
+    private Tarjeta tarjeta = new Tarjeta();
+	private final UserService userService;
+	private final CuentaService cuentaService;
 	private final BeanValidationBinder<Tarjeta> binder;
 
     private Button cancel = new Button("Cancelar");
     private Button submit = new Button("Enviar");
     
     @Autowired
-    public TarjetaView(TarjetaService tarjetaService, UserService userService) {
+    public TarjetaView(TarjetaService tarjetaService, UserService userService, CuentaService cuentaService) {
         addClassName("tarjeta-view");
+        this.cuentaService = cuentaService;
         this.userService = userService;
 
         add(createTitle());
@@ -71,7 +73,7 @@ public class TarjetaView extends Div {
         	try {
         		binder.writeBean(this.tarjeta);
     			tarjetaService.update(this.tarjeta);
-                Notification.show("Not implemented");
+                Notification.show("La tarjeta se ha asignado correctamente");
         	} catch(ValidationException e1) {
         		Notification.show("Ha ocurrido un error al asignar la tarjeta, inténtelo de nuevo más tarde.");
         	}
@@ -97,14 +99,18 @@ public class TarjetaView extends Div {
         numero.setErrorMessage("Por favor introduzca un numero de tarjeta valido");
         titular.setLabel("Titular");
         titular.setPlaceholder("Seleccione el titular");
-        titular.setItemLabelGenerator(User::getFullName);
+        titular.setItemLabelGenerator(User::getUsername);
         
-        final List<User> users = userService.findAllUsers(SecurityContextHolder.getContext().getAuthentication().getName());
+        final List<User> users = userService.findAllUsers(null);
         
         titular.setItems(users);
         cuenta.setLabel("Cuenta");
         cuenta.setPlaceholder("Seleccione la cuenta");
-        
+        titular.addValueChangeListener(event -> {
+        	cuenta.setItemLabelGenerator(Cuenta::getMote);
+        	final List<Cuenta> cuentas = cuentaService.findAllCuentas(event.getValue().getId().toString());
+            cuenta.setItems(cuentas);
+        });
         
         mes.setPlaceholder("Mes");
         mes.setItems(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);

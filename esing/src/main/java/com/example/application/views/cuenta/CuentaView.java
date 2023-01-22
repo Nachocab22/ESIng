@@ -32,13 +32,13 @@ import com.vaadin.flow.router.Route;
 @RolesAllowed("ADMIN")
 public class CuentaView extends Div {
 
-	private Cuenta cuenta = new Cuenta();
-	private final UserService userService;
     private TextField iban = new TextField("Número de cuenta");
     private Select<String> mote = new Select<>();
     private Select<User> titular = new Select<>();
     private Tarjeta tarjetas = null;
     
+    private Cuenta cuenta = new Cuenta();
+	private final UserService userService;
     private final BeanValidationBinder<Cuenta> binder;
 
     private Button cancel = new Button("Cancelar");
@@ -46,8 +46,8 @@ public class CuentaView extends Div {
 
     @Autowired
     public CuentaView(CuentaService cuentaService, UserService userService) {
+    	this.userService = userService;
         addClassName("asignar-cuenta");
-        this.userService = userService;
 
         add(createTitle());
         add(createFormLayout());

@@ -32,7 +32,7 @@ public class TarjetaService {
         repository.deleteById(id);
     }
     
-    public List<Tarjeta> findAllCuentas(String stringFilter){
+    public List<Tarjeta> findAllTarjetas(String stringFilter){
     	if(stringFilter == null || stringFilter.isEmpty()) {
     		return repository.findAll();
     	}else {
