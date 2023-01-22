@@ -32,7 +32,7 @@ import com.vaadin.flow.router.Route;
 @RolesAllowed("ADMIN")
 public class CuentaView extends Div {
 
-	private Cuenta cuenta;
+	private Cuenta cuenta = new Cuenta();
 	private final UserService userService;
     private TextField iban = new TextField("Número de cuenta");
     private Select<String> mote = new Select<>();
