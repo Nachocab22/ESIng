@@ -9,7 +9,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-@Entity
+@Entity(name = "cuenta")
 @Table(name = "cuenta")
 public class Cuenta extends AbstractEntity{
 

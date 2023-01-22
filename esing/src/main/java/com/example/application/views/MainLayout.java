@@ -11,8 +11,8 @@ import com.example.application.security.AuthenticatedUser;
 import com.example.application.views.esing.ESIngView;
 import com.example.application.views.incidencia.IncidenciaAdminView;
 import com.example.application.views.incidencia.IncidenciaView;
-import com.example.application.views.introducetarjetadecredito.IntroducetarjetadecreditoView;
 import com.example.application.views.movimientos.MovimientosView;
+import com.example.application.views.tarjeta.TarjetaView;
 import com.example.application.views.userpage.UserPageView;
 import com.example.application.views.usuarios.UsuariosView;
 import com.vaadin.flow.component.applayout.AppLayout;
@@ -87,8 +87,8 @@ public class MainLayout extends AppLayout {
             
         }
         
-        if (accessChecker.hasAccess(IntroducetarjetadecreditoView.class)) {
-            nav.addItem(new AppNavItem("Introduce tarjeta de credito", IntroducetarjetadecreditoView.class, "la la-credit-card"));
+        if (accessChecker.hasAccess(TarjetaView.class)) {
+            nav.addItem(new AppNavItem("Introduce tarjeta de credito", TarjetaView.class, "la la-credit-card"));
             
         }
            

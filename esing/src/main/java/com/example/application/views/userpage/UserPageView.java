@@ -2,27 +2,32 @@ package com.example.application.views.userpage;
 
 import javax.annotation.security.RolesAllowed;
 
+import com.example.application.data.service.CuentaService;
+import com.example.application.data.service.TarjetaService;
 import com.example.application.data.service.UserService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.HasStyle;
-import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Main;
+import com.vaadin.flow.component.html.OrderedList;
+import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.auth.AnonymousAllowed;
 
 //CHANGE PERMISSIONS (ANONYMOUS ARE NOT ALLOWED, THEY ARE ALLOWED BEFORE ADDING ACCOUNTS AND CARDS)
 
-@PageTitle("ESIng")
+@PageTitle("Tu zona")
 @Route(value = "user-page", layout = MainLayout.class)
 @RolesAllowed("USER")
 public class UserPageView extends Main implements HasComponents, HasStyle {
 
     private OrderedList dataContainer;
 
-    public UserPageView() {
+    public UserPageView(CuentaService cuentaService, TarjetaService tarjetaService, UserService userService) {
         constructUI();
 
         //Add user accounts and user cards
@@ -42,7 +47,7 @@ public class UserPageView extends Main implements HasComponents, HasStyle {
         H2 header = new H2("Sus detalles");
         H2 br = new H2();
         header.addClassNames("mb-0", "mt-xl", "text-3xl");
-        Paragraph description = new Paragraph("Royalty free photos and pictures, courtesy of Unsplash");
+        Paragraph description = new Paragraph("Tu zona de cliente");
         description.addClassNames("mb-xl", "mt-0", "text-secondary");
         headerContainer.add(header, description);
 

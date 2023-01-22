@@ -6,7 +6,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-@Entity
+@Entity(name = "tarjeta")
 @Table(name = "tarjeta")
 public class Tarjeta extends AbstractEntity{	
 	

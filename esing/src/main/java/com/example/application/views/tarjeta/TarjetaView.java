@@ -1,12 +1,14 @@
-package com.example.application.views.introducetarjetadecredito;
+package com.example.application.views.tarjeta;
 
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.example.application.data.entity.Cuenta;
+import com.example.application.data.entity.Tarjeta;
 import com.example.application.data.entity.User;
 import com.example.application.data.service.TarjetaService;
 import com.example.application.data.service.UserService;
@@ -23,14 +25,17 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.BeanValidationBinder;
+import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 @PageTitle("Introduce tarjeta de credito")
 @Route(value = "admin-tarjeta", layout = MainLayout.class)
 @RolesAllowed("ADMIN")
-public class IntroducetarjetadecreditoView extends Div {
+public class TarjetaView extends Div {
 
+	private Tarjeta tarjeta;
 	private final UserService userService;
 	private Select<Integer> mes = new Select<>();
 	private Select<Integer> año = new Select<>();
@@ -40,23 +45,36 @@ public class IntroducetarjetadecreditoView extends Div {
     private Select<Cuenta> cuenta = new Select<>();
     private ExpirationDateField caducidad = new ExpirationDateField("Fecha de caducidad", mes, año);
     private PasswordField cvv = new PasswordField("CVV");
+    
+	private final BeanValidationBinder<Tarjeta> binder;
 
     private Button cancel = new Button("Cancelar");
     private Button submit = new Button("Enviar");
-
-    public IntroducetarjetadecreditoView(UserService userService, TarjetaService tarjetaService) {
+    
+    @Autowired
+    public TarjetaView(TarjetaService tarjetaService, UserService userService) {
         addClassName("tarjeta-view");
         this.userService = userService;
 
         add(createTitle());
         add(createFormLayout());
         add(createButtonLayout());
+        
+		binder = new BeanValidationBinder<>(Tarjeta.class);
+		
+		binder.bindInstanceFields(this);
 
         cancel.addClickListener(e -> {
             Notification.show("Not implemented");
         });
         submit.addClickListener(e -> {
-            Notification.show("Not implemented");
+        	try {
+        		binder.writeBean(this.tarjeta);
+    			tarjetaService.update(this.tarjeta);
+                Notification.show("Not implemented");
+        	} catch(ValidationException e1) {
+        		Notification.show("Ha ocurrido un error al asignar la tarjeta, inténtelo de nuevo más tarde.");
+        	}
         });
     }
 
