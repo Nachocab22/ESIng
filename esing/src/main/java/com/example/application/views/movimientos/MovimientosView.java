@@ -1,11 +1,19 @@
 package com.example.application.views.movimientos;
 
+import com.example.application.data.entity.Cuenta;
 import com.example.application.data.entity.Movimiento;
+import com.example.application.data.entity.Tarjeta;
+import com.example.application.data.entity.User;
+import com.example.application.data.service.CuentaService;
 import com.example.application.data.service.MovimientoService;
+import com.example.application.data.service.TarjetaService;
+import com.example.application.data.service.UserService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
@@ -13,8 +21,8 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
-import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
@@ -24,6 +32,8 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.security.RolesAllowed;
@@ -40,13 +50,13 @@ public class MovimientosView extends Div implements BeforeEnterObserver {
 
     private final Grid<Movimiento> grid = new Grid<>(Movimiento.class, false);
 
-    private TextField cuenta;
-    private TextField tarjeta;
-    private IntegerField retenido;
+    private Select<Cuenta> cuenta = new Select<>();
+    private Select<Tarjeta> tarjeta = new Select<>();
+    private Checkbox retenido;
     private TextField concepto;
     private NumberField cantidad;
     private DatePicker fecha_op;
-    private IntegerField tipo;
+    private ComboBox<String> tipo = new ComboBox<>("Tipo de movimiento");
 
     private final Button cancelar = new Button("Cancelar");
     private final Button guardar = new Button("Guardar");
@@ -57,10 +67,16 @@ public class MovimientosView extends Div implements BeforeEnterObserver {
     private Movimiento movimiento;
 
     private final MovimientoService movimientoService;
+	private final CuentaService cuentaService;
+	private final UserService userService;
+	private final TarjetaService tarjetaService;
 
     @Autowired
-    public MovimientosView(MovimientoService movimientoService) {
+    public MovimientosView(MovimientoService movimientoService, CuentaService cuentaService, UserService userService, TarjetaService tarjetaService) {
         this.movimientoService = movimientoService;
+        this.cuentaService = cuentaService;
+        this.userService = userService;
+        this.tarjetaService = tarjetaService;
         addClassNames("movimientos-view");
 
         // Create UI
@@ -98,7 +114,6 @@ public class MovimientosView extends Div implements BeforeEnterObserver {
         binder = new BeanValidationBinder<>(Movimiento.class);
 
         // Bind fields. This is where you'd define e.g. validation rules
-
         binder.bindInstanceFields(this);
 
         cancelar.addClickListener(e -> {
@@ -114,8 +129,6 @@ public class MovimientosView extends Div implements BeforeEnterObserver {
                 if (cuenta.isEmpty()) {
 			        Notification.show("Falta introducir uno o más valores");
 			    } else if (tarjeta.isEmpty()) {
-			        Notification.show("Falta introducir uno o más valores");
-			    } else if (retenido.isEmpty()) {
 			        Notification.show("Falta introducir uno o más valores");
 			    } else if (concepto.isEmpty()) {
 			        Notification.show("Falta introducir uno o más valores");
@@ -181,24 +194,23 @@ public class MovimientosView extends Div implements BeforeEnterObserver {
         editorLayoutDiv.add(editorDiv);
 
         FormLayout formLayout = new FormLayout();
-        cuenta = new TextField("Cuenta");
-        tarjeta = new TextField("Tarjeta");
-        retenido = new IntegerField("Retenido");
-        retenido.setMin(0);
-        retenido.setMax(1);
-        retenido.setValue(0);
-        retenido.setHelperText("0=no 1=si");
+        
+        cuenta.setLabel("Cuenta");
+		cuenta.setItemLabelGenerator(Cuenta::getMote);
+		final List<Cuenta> cuentas = cuentaService.findAllCuentas(null);
+		cuenta.setItems(cuentas);
+		tarjeta.setLabel("Tarjeta");
+		tarjeta.setItemLabelGenerator(Tarjeta::getNumero);
+		final List<Tarjeta> tarjetas = tarjetaService.findAllTarjetas(null);
+		tarjeta.setItems(tarjetas);
+        retenido = new Checkbox("Retenido");
+        retenido.setLabel("El movimiento está retenido");
         concepto = new TextField("Concepto");
         cantidad = new NumberField("Cantidad");
-        cantidad.setMax(1000);
-        cantidad.setHelperText("Max 1000€");
         fecha_op = new DatePicker("Fecha");
-        tipo = new IntegerField("Tipo");
-        tipo.setMin(1);
-        tipo.setMax(3);
-        tipo.setValue(1);
-        tipo.setHelperText("valores 1, 2, 3");
-        formLayout.add(cuenta, tarjeta, retenido, concepto, cantidad, fecha_op, tipo);
+        tipo.setPlaceholder("Seleccione un tipo");
+        tipo.setItems("Ingreso", "Gasto");
+        formLayout.add(cuenta, tarjeta, concepto, cantidad, fecha_op, tipo, retenido);
 
         editorDiv.add(formLayout);
         createButtonLayout(editorLayoutDiv);
